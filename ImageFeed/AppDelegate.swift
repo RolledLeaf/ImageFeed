@@ -1,17 +1,10 @@
-//
-//  AppDelegate.swift
-//  ImageFeed
-//
-//  Created by Vitaly Wexler on 28.09.2024.
-//
-
 import UIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
-
+    //Входная точка приложения
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         return true
