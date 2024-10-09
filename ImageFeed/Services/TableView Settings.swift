@@ -8,7 +8,7 @@ extension ImagesListViewController: UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath) as? ImagesListCell else {
-             return UITableViewCell()
+            return UITableViewCell()
         }
         
         configCell(for: cell, with: indexPath)
@@ -26,7 +26,8 @@ extension ImagesListViewController: UITableViewDataSource {
         return 200
     }
 }
-    extension ImagesListViewController: UITableViewDelegate {
-        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {}
-    }
+
+extension ImagesListViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {}
+}
 
