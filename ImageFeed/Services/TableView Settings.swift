@@ -3,16 +3,27 @@ import UIKit
 
 extension ImagesListViewController: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return photosName.count
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
-        
-        guard let imageListCell = cell as? ImagesListCell else { return UITableViewCell()
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath) as? ImagesListCell else {
+             return UITableViewCell()
         }
-        configCell(for: imageListCell)
-        return imageListCell
+        
+        configCell(for: cell, with: indexPath)
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let imageName = photosName[indexPath.row]
+        if let image = UIImage(named: imageName) {
+            let aspectRatio = image.size.height / image.size.width
+            let width = tableView.bounds.width
+            let height = width * aspectRatio
+            return height
+        }
+        return 200
     }
 }
     extension ImagesListViewController: UITableViewDelegate {
