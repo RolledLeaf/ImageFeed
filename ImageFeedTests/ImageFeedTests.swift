@@ -1,10 +1,3 @@
-//
-//  ImageFeedTests.swift
-//  ImageFeedTests
-//
-//  Created by Vitaly Wexler on 28.09.2024.
-//
-
 import Testing
 @testable import ImageFeed
 
