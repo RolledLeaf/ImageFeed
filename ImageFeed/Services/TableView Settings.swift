@@ -18,6 +18,7 @@ extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let imageName = photosName[indexPath.row]
         if let image = UIImage(named: imageName) {
+            guard image.size.width > 0 else { return 200 }
             let aspectRatio = image.size.height / image.size.width
             let width = tableView.bounds.width
             let height = width * aspectRatio
