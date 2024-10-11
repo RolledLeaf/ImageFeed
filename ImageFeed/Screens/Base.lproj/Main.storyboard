@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_3" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--ImageList-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController title="ImageList" id="BYZ-38-t0r" customClass="ImagesListViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" estimatedSectionHeaderHeight="-1" sectionFooterHeight="28" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="q0G-yK-OkK">
+                                <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
+                                <color key="backgroundColor" name="Cell background color"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ImagesListCell" rowHeight="216" id="qJX-be-I3L" userLabel="ImagesListCell" customClass="ImagesListCell" customModule="ImageFeed" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="50" width="402" height="216"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="qJX-be-I3L" id="2Lk-LF-BTJ">
+                                            <rect key="frame" x="0.0" y="0.0" width="402" height="216"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="TR2-JA-g9Y">
+                                                    <rect key="frame" x="16" y="4" width="370" height="208"/>
+                                                    <accessibility key="accessibilityConfiguration">
+                                                        <accessibilityTraits key="traits" image="YES" allowsDirectInteraction="YES"/>
+                                                    </accessibility>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="27 августа 2022" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j0G-7x-6w5" userLabel="Data label">
+                                                    <rect key="frame" x="24.000000000000007" y="183" width="127.66666666666669" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" name="Date color"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AIF-l3-5Lm" userLabel="Like Button">
+                                                    <rect key="frame" x="342" y="4" width="44" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration">
+                                                        <bool key="isElement" value="NO"/>
+                                                    </accessibility>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="44" id="8dh-Cj-lHn"/>
+                                                        <constraint firstAttribute="width" constant="44" id="ZNd-Zu-pBo"/>
+                                                    </constraints>
+                                                    <state key="normal" title="Button"/>
+                                                    <buttonConfiguration key="configuration" style="plain" image="Active" title=" "/>
+                                                </button>
+                                            </subviews>
+                                            <color key="backgroundColor" name="Background color"/>
+                                            <constraints>
+                                                <constraint firstAttribute="bottom" secondItem="TR2-JA-g9Y" secondAttribute="bottom" constant="4" id="1BD-Fm-Y4p"/>
+                                                <constraint firstItem="TR2-JA-g9Y" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="j0G-7x-6w5" secondAttribute="trailing" constant="8" id="41E-t7-amY"/>
+                                                <constraint firstItem="TR2-JA-g9Y" firstAttribute="trailing" secondItem="AIF-l3-5Lm" secondAttribute="trailing" id="Q66-P9-Wak"/>
+                                                <constraint firstItem="j0G-7x-6w5" firstAttribute="leading" secondItem="TR2-JA-g9Y" secondAttribute="leading" constant="8" id="ZS5-nI-ots"/>
+                                                <constraint firstItem="AIF-l3-5Lm" firstAttribute="top" secondItem="TR2-JA-g9Y" secondAttribute="top" id="bCs-1P-Afs"/>
+                                                <constraint firstAttribute="trailing" secondItem="TR2-JA-g9Y" secondAttribute="trailing" constant="16" id="rr7-3t-2tJ"/>
+                                                <constraint firstItem="TR2-JA-g9Y" firstAttribute="leading" secondItem="2Lk-LF-BTJ" secondAttribute="leading" constant="16" id="ufd-4L-rbc"/>
+                                                <constraint firstItem="TR2-JA-g9Y" firstAttribute="top" secondItem="2Lk-LF-BTJ" secondAttribute="top" constant="4" id="wOT-fW-XI1"/>
+                                                <constraint firstItem="TR2-JA-g9Y" firstAttribute="bottom" secondItem="j0G-7x-6w5" secondAttribute="bottom" constant="8" id="yZH-m6-oZZ"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="cellImageView" destination="TR2-JA-g9Y" id="E5l-JW-hPo"/>
+                                            <outlet property="dateLabel" destination="j0G-7x-6w5" id="qQq-zt-WEK"/>
+                                            <outlet property="likeButton" destination="AIF-l3-5Lm" id="PcK-ku-rsq"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <sections/>
+                                <connections>
+                                    <outlet property="dataSource" destination="BYZ-38-t0r" id="nPp-Tp-FLO"/>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="f23-Tm-ias"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" name="Background color"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="q0G-yK-OkK" secondAttribute="trailing" id="3Ry-HF-l1Q"/>
+                            <constraint firstItem="q0G-yK-OkK" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="dG8-Om-c2t"/>
+                            <constraint firstAttribute="bottom" secondItem="q0G-yK-OkK" secondAttribute="bottom" id="dVZ-k9-7uc"/>
+                            <constraint firstItem="q0G-yK-OkK" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="k6A-pP-cVG"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="tableView" destination="q0G-yK-OkK" id="3vH-OD-onQ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="130.53435114503816" y="-34.507042253521128"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="0" width="1600" height="1059"/>
+        <image name="Active" width="30" height="26"/>
+        <namedColor name="Background color">
+            <color red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="Cell background color">
+            <color red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="Date color">
+            <color red="0.99607843137254903" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>
