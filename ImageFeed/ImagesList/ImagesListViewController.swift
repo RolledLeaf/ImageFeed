@@ -4,6 +4,7 @@ import UIKit
 final class ImagesListViewController: UIViewController {
     @IBOutlet private var tableView: UITableView!
     
+    let showSingleImageSegueIdentifier: String = "ShowSingleImage"
     let photosName: [String] = Array(0..<20).map{"\($0)"}
     
     override func viewDidLoad() {
@@ -25,6 +26,23 @@ final class ImagesListViewController: UIViewController {
         let isActive = indexPath.row % 2 == 0
         cell.configurationButton(isActive: isActive)
         cell.roundCorners()
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        //Проверка ID сигвея
+        if segue.identifier == showSingleImageSegueIdentifier {
+            guard
+                let viewController = segue.destination as? SingleImageViewController,
+                let indexPath = sender as? IndexPath
+            else {
+                assertionFailure("Invalid segue destination")
+                return
+            }
+            let image = UIImage(named: photosName[indexPath.row])
+            viewController.image = image
+        } else {
+            super.prepare(for: segue, sender: sender)
+        }
     }
 }
 
