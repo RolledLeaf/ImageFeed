@@ -34,3 +34,13 @@ extension ImagesListViewController: UITableViewDelegate {
     }
 }
 
+extension SingleImageViewController: UIScrollViewDelegate {
+    //Метод, определяющий какую именно вью увеличивать
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return imageView
+        
+        func scrollViewDidZoom(_ scrollView: UIScrollView) {
+            centerImage()
+        }
+    }
+}

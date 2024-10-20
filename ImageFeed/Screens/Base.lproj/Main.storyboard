@@ -29,7 +29,7 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cDi-YM-oa4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2198" y="-1858"/>
+            <point key="canvasLocation" x="-1663" y="-1807"/>
         </scene>
         <!--ImageList-->
         <scene sceneID="tne-QT-ifu">
@@ -202,9 +202,28 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="8Ve-UO-pS7">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dXR-g8-mNg">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                            </imageView>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="8Ve-UO-pS7">
+                                        <rect key="frame" x="-3" y="0.0" width="398" height="856"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                </subviews>
+                                <viewLayoutGuide key="contentLayoutGuide" id="38v-QS-AaT"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="zSL-fH-6H3"/>
+                                <connections>
+                                    <outlet property="delegate" destination="hpE-Gk-apg" id="3SG-eM-sOT"/>
+                                </connections>
+                            </scrollView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pZG-zf-Ov0" userLabel="Share button">
+                                <rect key="frame" x="156.66666666666666" y="737" width="80" height="65"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" image="Sharing" title=" "/>
+                                <connections>
+                                    <action selector="didTapShareButton:" destination="hpE-Gk-apg" eventType="touchUpInside" id="qAp-pZ-hok"/>
+                                </connections>
+                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vk4-IQ-B0K" userLabel="Back button">
                                 <rect key="frame" x="8" y="8" width="48" height="48"/>
                                 <constraints>
@@ -221,22 +240,25 @@
                         <viewLayoutGuide key="safeArea" id="Buw-zl-dF1"/>
                         <color key="backgroundColor" name="Background color #1A1B22"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="8Ve-UO-pS7" secondAttribute="trailing" id="1Pa-0Q-Qlx"/>
-                            <constraint firstItem="8Ve-UO-pS7" firstAttribute="leading" secondItem="1oS-NJ-Pea" secondAttribute="leading" id="1Tp-xB-6QB"/>
+                            <constraint firstItem="dXR-g8-mNg" firstAttribute="leading" secondItem="Buw-zl-dF1" secondAttribute="leading" id="8Cf-wb-HV1"/>
                             <constraint firstItem="Vk4-IQ-B0K" firstAttribute="top" secondItem="Buw-zl-dF1" secondAttribute="top" constant="8" id="9u8-Si-cen"/>
+                            <constraint firstItem="dXR-g8-mNg" firstAttribute="trailing" secondItem="Buw-zl-dF1" secondAttribute="trailing" id="Jce-7a-db4"/>
+                            <constraint firstAttribute="bottom" secondItem="dXR-g8-mNg" secondAttribute="bottom" id="P2z-8g-bp7"/>
                             <constraint firstItem="Vk4-IQ-B0K" firstAttribute="leading" secondItem="Buw-zl-dF1" secondAttribute="leading" constant="8" id="S7p-mU-Nsf"/>
-                            <constraint firstItem="8Ve-UO-pS7" firstAttribute="top" secondItem="1oS-NJ-Pea" secondAttribute="top" id="d3t-EP-Vtr"/>
-                            <constraint firstAttribute="bottom" secondItem="8Ve-UO-pS7" secondAttribute="bottom" id="etF-k1-dKs"/>
+                            <constraint firstItem="pZG-zf-Ov0" firstAttribute="centerX" secondItem="1oS-NJ-Pea" secondAttribute="centerX" id="SgD-Yr-XHM"/>
+                            <constraint firstItem="dXR-g8-mNg" firstAttribute="top" secondItem="1oS-NJ-Pea" secondAttribute="top" id="Uvj-dV-A9X"/>
+                            <constraint firstItem="Buw-zl-dF1" firstAttribute="bottom" secondItem="pZG-zf-Ov0" secondAttribute="bottom" constant="50" id="biX-77-GCc"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="f0O-Zs-ozh"/>
                     <connections>
                         <outlet property="imageView" destination="8Ve-UO-pS7" id="o1y-GE-EQe"/>
+                        <outlet property="scrollView" destination="dXR-g8-mNg" id="MZs-eS-7SP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="G5O-hh-cEz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="274" y="-2147"/>
+            <point key="canvasLocation" x="270.99236641221376" y="-2147.1830985915494"/>
         </scene>
     </scenes>
     <resources>
@@ -244,6 +266,7 @@
         <image name="Active" width="30" height="26"/>
         <image name="Logout" width="20" height="22"/>
         <image name="Photo " width="280" height="280"/>
+        <image name="Sharing" width="51" height="51"/>
         <image name="backward arrow" width="9" height="16"/>
         <image name="tab_editorial_active" width="20" height="22"/>
         <image name="tab_profile_active" width="75" height="49"/>
