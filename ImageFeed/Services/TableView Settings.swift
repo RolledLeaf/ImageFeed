@@ -29,6 +29,18 @@ extension ImagesListViewController: UITableViewDataSource {
 }
 
 extension ImagesListViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {}
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: showSingleImageSegueIdentifier, sender: indexPath)
+    }
 }
 
+extension SingleImageViewController: UIScrollViewDelegate {
+    //Метод, определяющий какую именно вью увеличивать
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return imageView
+        
+        func scrollViewDidZoom(_ scrollView: UIScrollView) {
+            centerImage()
+        }
+    }
+}
