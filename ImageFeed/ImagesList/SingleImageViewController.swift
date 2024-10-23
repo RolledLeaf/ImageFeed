@@ -6,7 +6,7 @@ final class SingleImageViewController: UIViewController {
             guard isViewLoaded else { return }
             imageView.image = image
             
-            // Если изображение есть, вызываем рескейл и центрирование
+            // Вызов рескейла и центрирования
             if let image = image {
                 rescaleAndCenterImageInScrollView(image: image)
             }
@@ -21,14 +21,10 @@ final class SingleImageViewController: UIViewController {
         guard let image = image else {
             return
         }
-        
-        // массив с данными для передачи (в данном случае это изображение)
+     
         let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
-        
-        // Показываем ActivityViewController
         present(activityController, animated: true, completion: nil)
     }
-
     
     @IBOutlet var imageView: UIImageView!
     @IBOutlet var scrollView: UIScrollView!
@@ -43,7 +39,7 @@ final class SingleImageViewController: UIViewController {
             rescaleAndCenterImageInScrollView(image: image)
         }
         
-        // Устанавливаем параметры масштабирования для UIScrollView
+        // параметры масштабирования для UIScrollView
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
     }
@@ -67,7 +63,7 @@ final class SingleImageViewController: UIViewController {
     }
     
     // Центрирование изображения в scrollView
-     func centerImage() {
+    func centerImage() {
         let visibleRectSize = scrollView.bounds.size
         let newContentSize = scrollView.contentSize
         let x = max((newContentSize.width - visibleRectSize.width) / 2, 0)

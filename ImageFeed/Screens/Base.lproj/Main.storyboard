@@ -122,73 +122,17 @@
             </objects>
             <point key="canvasLocation" x="-601" y="-2148"/>
         </scene>
-        <!--Is Initial View Controller-->
+        <!--Profile-->
         <scene sceneID="NhG-Ar-ZBl">
             <objects>
-                <viewController id="zdV-gl-kBM" userLabel="Is Initial View Controller" customClass="ProfileViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="zdV-gl-kBM" userLabel="Profile" customClass="ProfileViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="vyI-OO-SHL">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YwE-Ds-7ag" userLabel="Logout">
-                                <rect key="frame" x="344.33333333333331" y="115" width="44" height="44"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="44" id="aqX-JR-sFG"/>
-                                    <constraint firstAttribute="width" secondItem="YwE-Ds-7ag" secondAttribute="height" multiplier="1:1" id="cpM-9Z-vst"/>
-                                </constraints>
-                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" title=" " image="Logout"/>
-                                <connections>
-                                    <action selector="logoutButton:" destination="zdV-gl-kBM" eventType="touchUpInside" id="hQh-d1-oXO"/>
-                                </connections>
-                            </button>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="top" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="hxN-Ce-3ny" userLabel="Profile Stack View">
-                                <rect key="frame" x="15.999999999999986" y="91" width="233.66666666666663" height="153"/>
-                                <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Photo " translatesAutoresizingMaskIntoConstraints="NO" id="QOS-m3-Wdf" userLabel="profile picture">
-                                        <rect key="frame" x="0.0" y="0.0" width="70" height="70"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="70" id="WyT-41-AX2"/>
-                                            <constraint firstAttribute="width" secondItem="QOS-m3-Wdf" secondAttribute="height" multiplier="1:1" id="snq-2E-OaQ"/>
-                                        </constraints>
-                                    </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Екатерина Новикова" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yvs-9c-rYm">
-                                        <rect key="frame" x="0.0" y="78" width="233.66666666666666" height="27.666666666666671"/>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
-                                        <color key="textColor" name="Name color #FFFFFFF"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="@ekatrina_nov" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3L4-NW-ISG">
-                                        <rect key="frame" x="0.0" y="113.66666666666666" width="90" height="15.666666666666657"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                        <color key="textColor" name="ID Color #AEAFB4"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello, world!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CT4-jC-fQ2">
-                                        <rect key="frame" x="0.0" y="137.33333333333334" width="75.666666666666671" height="15.666666666666657"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                        <color key="textColor" name="Name color #FFFFFFF"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
-                            </stackView>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="phv-lg-0d2"/>
                         <color key="backgroundColor" name="Background color"/>
-                        <constraints>
-                            <constraint firstItem="hxN-Ce-3ny" firstAttribute="leading" secondItem="phv-lg-0d2" secondAttribute="leading" constant="16" id="1Pu-sR-Gat"/>
-                            <constraint firstItem="YwE-Ds-7ag" firstAttribute="leading" secondItem="hxN-Ce-3ny" secondAttribute="trailing" constant="94.5" id="YJE-Yh-bCb"/>
-                            <constraint firstItem="phv-lg-0d2" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="YwE-Ds-7ag" secondAttribute="trailing" id="eCx-qq-pkK"/>
-                            <constraint firstItem="YwE-Ds-7ag" firstAttribute="top" secondItem="phv-lg-0d2" secondAttribute="top" constant="56" id="jHP-TE-rqc"/>
-                            <constraint firstItem="hxN-Ce-3ny" firstAttribute="top" secondItem="phv-lg-0d2" secondAttribute="top" constant="32" id="wzV-WJ-PfH"/>
-                        </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="" image="tab_profile_active" id="DfP-1g-kZy"/>
-                    <connections>
-                        <outlet property="profileDescription" destination="CT4-jC-fQ2" id="upU-Tq-WBx"/>
-                        <outlet property="profileID" destination="3L4-NW-ISG" id="hU6-Nw-Feg"/>
-                        <outlet property="profileName" destination="yvs-9c-rYm" id="46S-Vg-fga"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Vin-C8-g0d" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -264,8 +208,6 @@
     <resources>
         <image name="0" width="1600" height="1059"/>
         <image name="Active" width="30" height="26"/>
-        <image name="Logout" width="20" height="22"/>
-        <image name="Photo " width="280" height="280"/>
         <image name="Sharing" width="51" height="51"/>
         <image name="backward arrow" width="9" height="16"/>
         <image name="tab_editorial_active" width="20" height="22"/>
@@ -281,12 +223,6 @@
         </namedColor>
         <namedColor name="Date color">
             <color red="0.99607843137254903" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
-        <namedColor name="ID Color #AEAFB4">
-            <color red="0.68235294117647061" green="0.68627450980392157" blue="0.70588235294117652" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
-        <namedColor name="Name color #FFFFFFF">
-            <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>
