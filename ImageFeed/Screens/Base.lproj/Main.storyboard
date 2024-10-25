@@ -23,8 +23,8 @@
                         </tabBarAppearance>
                     </tabBar>
                     <connections>
-                        <segue destination="zdV-gl-kBM" kind="relationship" relationship="viewControllers" id="as5-Ok-wJ4"/>
                         <segue destination="BYZ-38-t0r" kind="relationship" relationship="viewControllers" id="TWI-Tl-vlK"/>
+                        <segue destination="zdV-gl-kBM" kind="relationship" relationship="viewControllers" id="as5-Ok-wJ4"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cDi-YM-oa4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -111,7 +111,7 @@
                             <constraint firstItem="q0G-yK-OkK" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="k6A-pP-cVG"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Item" image="tab_editorial_active" id="MEw-ok-hP4"/>
+                    <tabBarItem key="tabBarItem" title="" image="tab_editorial_active" id="MEw-ok-hP4" userLabel="Images bar item"/>
                     <navigationItem key="navigationItem" id="bS0-4h-LMe"/>
                     <connections>
                         <outlet property="tableView" destination="q0G-yK-OkK" id="3vH-OD-onQ"/>
@@ -132,11 +132,11 @@
                         <viewLayoutGuide key="safeArea" id="phv-lg-0d2"/>
                         <color key="backgroundColor" name="Background color"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="" image="tab_profile_active" id="DfP-1g-kZy"/>
+                    <tabBarItem key="tabBarItem" title="" image="tab_profile_active" id="DfP-1g-kZy" userLabel="Profile bar item"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Vin-C8-g0d" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-600" y="-1447"/>
+            <point key="canvasLocation" x="-602" y="-1475"/>
         </scene>
         <!--Single Image View Controller-->
         <scene sceneID="1qs-xO-eDQ">
@@ -161,9 +161,18 @@
                                 </connections>
                             </scrollView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pZG-zf-Ov0" userLabel="Share button">
-                                <rect key="frame" x="156.66666666666666" y="737" width="80" height="65"/>
+                                <rect key="frame" x="171" y="751" width="51" height="51"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="51" id="3Jm-QG-Cvz"/>
+                                    <constraint firstAttribute="width" constant="51" id="kbl-Wq-dLz"/>
+                                </constraints>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" image="Sharing" title=" "/>
+                                <buttonConfiguration key="configuration" style="plain" image="Sharing 1" title=" ">
+                                    <backgroundConfiguration key="background" cornerRadius="25">
+                                        <color key="backgroundColor" name="Background color #1A1B22"/>
+                                    </backgroundConfiguration>
+                                    <directionalEdgeInsets key="contentInsets" top="0.0" leading="5" bottom="0.0" trailing="0.0"/>
+                                </buttonConfiguration>
                                 <connections>
                                     <action selector="didTapShareButton:" destination="hpE-Gk-apg" eventType="touchUpInside" id="qAp-pZ-hok"/>
                                 </connections>
@@ -208,7 +217,7 @@
     <resources>
         <image name="0" width="1600" height="1059"/>
         <image name="Active" width="30" height="26"/>
-        <image name="Sharing" width="51" height="51"/>
+        <image name="Sharing 1" width="30" height="30"/>
         <image name="backward arrow" width="9" height="16"/>
         <image name="tab_editorial_active" width="20" height="22"/>
         <image name="tab_profile_active" width="75" height="49"/>
