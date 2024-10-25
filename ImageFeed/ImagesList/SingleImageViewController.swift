@@ -3,41 +3,36 @@ import UIKit
 final class SingleImageViewController: UIViewController {
     var image: UIImage? {
         didSet {
-            guard isViewLoaded else { return }
+            guard isViewLoaded, let image else { return }
             imageView.image = image
-            
-            // Вызов рескейла и центрирования
-            if let image = image {
-                rescaleAndCenterImageInScrollView(image: image)
-            }
+            rescaleAndCenterImageInScrollView(image: image)
         }
     }
     
-    @IBAction func didTapBackButton(_ sender: Any) {
+    @IBAction private func didTapBackButton(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func didTapShareButton(_ sender: Any) {
+    @IBAction private func didTapShareButton(_ sender: Any) {
         guard let image = image else {
             return
         }
-     
+        
         let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
         present(activityController, animated: true, completion: nil)
     }
     
-    @IBOutlet var imageView: UIImageView!
-    @IBOutlet var scrollView: UIScrollView!
+    @IBOutlet private var imageView: UIImageView!
+    @IBOutlet private var scrollView: UIScrollView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Устанавливаем изображение и выполняем рескейл
-        if let image = image {
-            imageView.image = image
-            imageView.frame.size = image.size
-            rescaleAndCenterImageInScrollView(image: image)
-        }
+        guard let image else { return }
+        imageView.image = image
+        imageView.frame.size = image.size
+        rescaleAndCenterImageInScrollView(image: image)
         
         // параметры масштабирования для UIScrollView
         scrollView.minimumZoomScale = 0.1
@@ -58,12 +53,11 @@ final class SingleImageViewController: UIViewController {
         
         scrollView.setZoomScale(scale, animated: false)
         scrollView.layoutIfNeeded()
-        
         centerImage()
     }
     
     // Центрирование изображения в scrollView
-    func centerImage() {
+    private func centerImage() {
         let visibleRectSize = scrollView.bounds.size
         let newContentSize = scrollView.contentSize
         let x = max((newContentSize.width - visibleRectSize.width) / 2, 0)
@@ -72,3 +66,12 @@ final class SingleImageViewController: UIViewController {
     }
 }
 
+extension SingleImageViewController: UIScrollViewDelegate {
+    //Метод, определяющий какую именно вью увеличивать
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return imageView
+    }
+    func scrollViewDidZoom(_ scrollView: UIScrollView) {
+        centerImage()
+    }
+}
