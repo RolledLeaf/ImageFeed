@@ -6,14 +6,34 @@ class WebViewViewController: UIViewController {
     private let webView = WKWebView()
     private let backButton = UIButton(type: .custom)
     weak var delegate: WebViewViewControllerDelegate?
+    private let progressBar = UIProgressView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
         webView.navigationDelegate = self
         loadAuthView()
-        setupUI()
+        setupWebView()
         setupBackButton()
+        setupProgressBar()
         navigationItem.hidesBackButton = true
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == #keyPath(WKWebView.estimatedProgress) {
+            updateProgress()
+        } else {
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+        }
+    }
+    
+    private func updateProgress() {
+        progressBar.progress = Float(webView.estimatedProgress)
+        progressBar.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
+    }
+    
+    deinit {
+        webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
     }
     
     private func loadAuthView() {
@@ -38,9 +58,22 @@ class WebViewViewController: UIViewController {
         webView.load(request)
     }
     
-    private func setupUI() {
+    private func setupProgressBar() {
+        view.addSubview(progressBar)
+        progressBar.progressTintColor = .backgroundColor1A1B22
+        progressBar.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            progressBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            progressBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            progressBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            progressBar.heightAnchor.constraint(equalToConstant: .init(5))
+            
+        ])
+    }
+    
+    private func setupWebView() {
         view.addSubview(webView)
-        view.addSubview(backButton)
         webView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -52,6 +85,7 @@ class WebViewViewController: UIViewController {
     }
     
     private func setupBackButton() {
+        view.addSubview(backButton)
         backButton.setImage(UIImage(named: "backward black"), for: .normal)
         backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         backButton.translatesAutoresizingMaskIntoConstraints = false
