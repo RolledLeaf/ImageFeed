@@ -7,6 +7,7 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
     private let loginIcon = UIImageView()
     private let loginButton = UIButton()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .backgroundColor1A1B22
@@ -44,6 +45,19 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
             loginButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -90),
             loginButton.heightAnchor.constraint(equalToConstant: 48)
         ])
+    }
+    
+    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
+        OAuth2Service.shared.fetchOAuthToken(code: code) { result in
+            switch result {
+            case .success(let token):
+                print("Successfully obtained token: \(token)")
+                // Обновите UI или выполните дальнейшие действия
+            case .failure(let error):
+                print("Failed to fetch token: \(error)")
+                // Обработайте ошибку
+            }
+        }
     }
     
     @objc private func  loginButtonTapped() {
