@@ -12,10 +12,10 @@ class WebViewViewController: UIViewController {
         super.viewDidLoad()
         webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
         webView.navigationDelegate = self
-        loadAuthView()
         setupWebView()
         setupBackButton()
         setupProgressBar()
+        loadAuthView()
         navigationItem.hidesBackButton = true
     }
     
@@ -56,6 +56,7 @@ class WebViewViewController: UIViewController {
         
         let request = URLRequest(url: url)
         webView.load(request)
+        print("Authorization URL: \(url.absoluteString)")
     }
     
     private func setupProgressBar() {

@@ -1,12 +1,16 @@
 import UIKit
 import Foundation
 
+protocol AuthViewControllerDelegate: AnyObject {
+    func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String)
+}
 
 final class AuthViewController: UIViewController, WebViewViewControllerDelegate {
     
     private let loginIcon = UIImageView()
     private let loginButton = UIButton()
     
+    weak var delegate: AuthViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,7 +52,7 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
     }
     
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        OAuth2Service.shared.fetchOAuthToken(code: code) { result in
+        OAuth2Service.shared.fetchOAuthToken1(code: code) { result in
             switch result {
             case .success(let token):
                 print("Successfully obtained token: \(token)")
