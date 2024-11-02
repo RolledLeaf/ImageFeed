@@ -129,8 +129,9 @@ extension WebViewViewController: WKNavigationDelegate {
                  decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
         if let code = code(from: navigationAction) {
-            delegate?.didReceiveAuthorizationCode(code)
-            decisionHandler(.cancel)
+                    // Вызываем метод делегата для передачи кода
+                    delegate?.webViewViewController(self, didAuthenticateWithCode: code)
+                    decisionHandler(.cancel) // Отменяем переход на этот URL
         } else {
             decisionHandler(.allow)
         }
