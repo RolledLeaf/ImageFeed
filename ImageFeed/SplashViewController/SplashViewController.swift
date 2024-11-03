@@ -10,8 +10,10 @@ final class SplashViewController: UIViewController {
         // Проверяем наличие токена
         if let token = oauth2TokenStorage.token {
             switchToTabBarController()
+            print("Token found: \(token)")
         } else {
             showAuthenticationScreen()
+            print("Token not found")
         }
     }
 
