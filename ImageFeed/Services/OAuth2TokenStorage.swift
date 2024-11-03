@@ -14,6 +14,7 @@ final class OAuth2TokenStorage {
         }
         set {
             UserDefaults.standard.setValue(newValue, forKey: tokenKey)
+            print("Token saved: \(newValue ?? "")")
         }
     }
 }

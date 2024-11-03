@@ -25,10 +25,17 @@ final class SplashViewController: UIViewController {
     }
 
     private func switchToTabBarController() {
-        guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
+        guard let window = UIApplication.shared.windows.first else {
+                   assertionFailure("Invalid window configuration")
+                   return
+               }
         let tabBarController = UIStoryboard(name: "Main", bundle: .main)
             .instantiateViewController(withIdentifier: "TabBarViewController")
-        window.rootViewController = tabBarController
+
+        // Настраиваем анимацию перехода
+        UIView.transition(with: window, duration: 0.5, options: .transitionFlipFromRight, animations: {
+            window.rootViewController = tabBarController
+        }, completion: nil)
     }
 
     //Метод используется вместо сигвея к экрану автризации
@@ -45,7 +52,7 @@ final class SplashViewController: UIViewController {
 
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
-        dismiss(animated: true) { [weak self] in
+        vc.dismiss(animated: true) { [weak self] in
             guard let self = self else { return }
             self.oauth2Service.fetchOAuthToken1(code: code) { result in
                 switch result {
