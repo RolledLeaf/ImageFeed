@@ -1,12 +1,16 @@
 import UIKit
 import Foundation
 
+protocol AuthViewControllerDelegate: AnyObject {
+    func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String)
+}
 
 final class AuthViewController: UIViewController, WebViewViewControllerDelegate {
     
     private let loginIcon = UIImageView()
     private let loginButton = UIButton()
-    
+    private let oauth2TokenStorage = OAuth2TokenStorage()
+    weak var delegate: AuthViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,23 +51,26 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
         ])
     }
     
+    @objc private func  loginButtonTapped() {
+        let webViewController = WebViewViewController()
+        webViewController.delegate = self
+        navigationController?.pushViewController(webViewController, animated: true)
+    }
+    
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        OAuth2Service.shared.fetchOAuthToken(code: code) { result in
+        // Сначала сообщаем делегату о получении кода
+            self.delegate?.authViewController(self, didAuthenticateWithCode: code)
+        
+        OAuth2Service.shared.fetchOAuthToken1(code: code) { result in
             switch result {
             case .success(let token):
                 print("Successfully obtained token: \(token)")
-                // Обновите UI или выполните дальнейшие действия
+                self.oauth2TokenStorage.token = token
             case .failure(let error):
                 print("Failed to fetch token: \(error)")
                 // Обработайте ошибку
             }
         }
-    }
-    
-    @objc private func  loginButtonTapped() {
-        let webViewController = WebViewViewController()
-        webViewController.delegate = self
-        navigationController?.pushViewController(webViewController, animated: true)
     }
     
     func didReceiveAuthorizationCode(_ code: String) {

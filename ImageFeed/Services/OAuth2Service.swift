@@ -2,9 +2,13 @@ import Foundation
 
 final class OAuth2Service {
     static let shared = OAuth2Service()
-    private init() {}
+     init() {}
 
-    func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
+    func fetchOAuthToken1(code: String, completion: @escaping (Result<String, Error>) -> Void) {
+        print("Access Key: \(Constants.accessKey)")
+        print("Secret Key: \(Constants.secretKey)")
+        print("Redirect URI: \(Constants.redirectURI)")
+        print("Authorization Code: \(code)")
         let parameters: [String: String] = [
             "client_id": Constants.accessKey,
             "client_secret": Constants.secretKey,
@@ -21,11 +25,11 @@ final class OAuth2Service {
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.httpBody = parameters.percentEncoded() // Теперь это будет работать
+        request.httpBody = parameters.percentEncoded()
 
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                print("Network error: \(error.localizedDescription)") // Логируем сетевую ошибку
+                print("Network error: \(error.localizedDescription)")
                 completion(.failure(error))
                 return
             }
