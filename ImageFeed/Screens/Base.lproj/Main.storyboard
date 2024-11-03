@@ -130,12 +130,6 @@
                     <view key="view" contentMode="scaleToFill" id="vyI-OO-SHL">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" fixedFrame="YES" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Hoq-CW-BKa">
-                                <rect key="frame" x="115" y="229" width="150" height="4"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </progressView>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="phv-lg-0d2"/>
                         <color key="backgroundColor" name="Background color"/>
                     </view>

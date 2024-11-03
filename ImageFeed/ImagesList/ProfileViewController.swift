@@ -7,6 +7,7 @@ final class ProfileViewController: UIViewController {
     private let profileIDLabel = UILabel()
     private let profileDescriptionLabel = UILabel()
     private let logoutButton = UIButton()
+    private let oauth2TokenStorage = OAuth2TokenStorage()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,6 +22,7 @@ final class ProfileViewController: UIViewController {
         configureLabel(profileIDLabel, text: "@ekaterina_nov", fontSize: 13, weight: .regular, color: .idColor)
         configureLabel(profileDescriptionLabel, text: "Hello, world!", fontSize: 13, weight: .regular, color: .nameColor)
         logoutButton.setImage(UIImage(systemName: "ipad.and.arrow.forward"), for: .normal)
+        logoutButton.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
         logoutButton.tintColor = .logoutRed
         logoutButton.layer.cornerRadius = 0
         
@@ -59,5 +61,21 @@ final class ProfileViewController: UIViewController {
             logoutButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -24)
         ])
     }
+    
+    @objc func logoutButtonTapped() {
+        oauth2TokenStorage.clearToken()
+       switchToAuthScreen()
+    }
+    
+    private func switchToAuthScreen() {
+            guard let window = UIApplication.shared.windows.first else { return }
+            
+            let splashViewController = SplashViewController()
+            window.rootViewController = splashViewController
+            window.makeKeyAndVisible()
+            
+            // Добавляем анимацию перехода
+            UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromRight, animations: nil, completion: nil)
+        }
 }
 
