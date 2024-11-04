@@ -1,7 +1,7 @@
 import UIKit
 import WebKit
 
-class WebViewViewController: UIViewController {
+final class WebViewViewController: UIViewController {
     
     private let webView = WKWebView()
     private let backButton = UIButton(type: .custom)

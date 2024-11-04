@@ -64,18 +64,19 @@ final class ProfileViewController: UIViewController {
     
     @objc func logoutButtonTapped() {
         oauth2TokenStorage.clearToken()
-       switchToAuthScreen()
+        oauth2TokenStorage.clearCookies()
+        switchToAuthScreen()
     }
     
     private func switchToAuthScreen() {
-            guard let window = UIApplication.shared.windows.first else { return }
-            
-            let splashViewController = SplashViewController()
-            window.rootViewController = splashViewController
-            window.makeKeyAndVisible()
-            
-            // Добавляем анимацию перехода
-            UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromRight, animations: nil, completion: nil)
-        }
+        guard let window = UIApplication.shared.windows.first else { return }
+        
+        let splashViewController = SplashViewController()
+        window.rootViewController = splashViewController
+        window.makeKeyAndVisible()
+        
+        // Добавляем анимацию перехода
+        UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromRight, animations: nil, completion: nil)
+    }
 }
 
