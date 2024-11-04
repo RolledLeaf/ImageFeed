@@ -2,13 +2,15 @@ import Foundation
 
 final class OAuth2Service {
     static let shared = OAuth2Service()
-     init() {}
-
+    init() {}
+    
     func fetchOAuthToken1(code: String, completion: @escaping (Result<String, Error>) -> Void) {
+        print("Fetching OAuth token...")
         print("Access Key: \(Constants.accessKey)")
         print("Secret Key: \(Constants.secretKey)")
         print("Redirect URI: \(Constants.redirectURI)")
         print("Authorization Code: \(code)")
+        
         let parameters: [String: String] = [
             "client_id": Constants.accessKey,
             "client_secret": Constants.secretKey,
@@ -16,31 +18,31 @@ final class OAuth2Service {
             "code": code,
             "grant_type": "authorization_code"
         ]
-
+        
         guard let url = URL(string: "https://unsplash.com/oauth/token") else {
             print("Invalid URL") // Логируем ошибку
             completion(.failure(URLError(.badURL)))
             return
         }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.httpBody = parameters.percentEncoded()
-
+        
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 print("Network error: \(error.localizedDescription)")
                 completion(.failure(error))
                 return
             }
-
+            
             guard let httpResponse = response as? HTTPURLResponse else {
                 let responseError = NSError(domain: "ResponseError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
                 print("Response error: \(responseError.localizedDescription)") // Логируем ошибку
                 completion(.failure(responseError))
                 return
             }
-
+            
             // Обрабатываем успешный ответ или ошибки сервиса Unsplash
             if (200...299).contains(httpResponse.statusCode) {
                 guard let data = data else {
@@ -48,7 +50,7 @@ final class OAuth2Service {
                     completion(.failure(NSError(domain: "DataError", code: -1, userInfo: [NSLocalizedDescriptionKey: "No data received"])))
                     return
                 }
-
+                
                 do {
                     let tokenResponse = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
                     let token = tokenResponse.accessToken
@@ -73,16 +75,15 @@ final class OAuth2Service {
         }.resume()
     }
 }
-    
-    // Структура для декодирования ответа
-    struct TokenResponse: Codable {
-        let accessToken: String
-        
-        enum CodingKeys: String, CodingKey {
-            case accessToken = "access_token"
-        }
-    }
 
+// Структура для декодирования ответа
+struct TokenResponse: Codable {
+    let accessToken: String
+
+    enum CodingKeys: String, CodingKey {
+        case accessToken = "access_token"
+    }
+}
 
 extension URLSession {
     func dataTask(with request: URLRequest, completion: @escaping (Result<(Data, URLResponse), Error>) -> Void) -> URLSessionDataTask {

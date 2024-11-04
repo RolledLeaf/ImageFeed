@@ -3,7 +3,7 @@ import UIKit
 final class SplashViewController: UIViewController {
     private let oauth2Service = OAuth2Service()
     private let oauth2TokenStorage = OAuth2TokenStorage()
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -16,30 +16,30 @@ final class SplashViewController: UIViewController {
             print("Token not found")
         }
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setNeedsStatusBarAppearanceUpdate()
     }
-
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
     }
-
+    
     private func switchToTabBarController() {
         guard let window = UIApplication.shared.windows.first else {
-                   assertionFailure("Invalid window configuration")
-                   return
-               }
+            assertionFailure("Invalid window configuration")
+            return
+        }
         let tabBarController = UIStoryboard(name: "Main", bundle: .main)
             .instantiateViewController(withIdentifier: "TabBarViewController")
-
+        
         // Настраиваем анимацию перехода
         UIView.transition(with: window, duration: 0.5, options: .transitionFlipFromRight, animations: {
             window.rootViewController = tabBarController
         }, completion: nil)
     }
-
+    
     //Метод используется вместо сигвея к экрану автризации
     private func showAuthenticationScreen() {
         let authViewController = AuthViewController()
@@ -50,8 +50,6 @@ final class SplashViewController: UIViewController {
     }
 }
 
-// MARK: - AuthViewControllerDelegate
-
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
         vc.dismiss(animated: true) { [weak self] in
@@ -59,11 +57,12 @@ extension SplashViewController: AuthViewControllerDelegate {
             self.oauth2Service.fetchOAuthToken1(code: code) { result in
                 switch result {
                 case .success(let token):
-                    print("Token successfully fetched: \(token)") // Логируем успех
-                    self.oauth2TokenStorage.token = token // Сохраняем токен
-                    self.switchToTabBarController()
+                    print("Token successfully fetched: \(token)")
+                    DispatchQueue.main.async {
+                        self.switchToTabBarController()
+                    }
                 case .failure(let error):
-                    print("Failed to fetch token: \(error.localizedDescription)") // Логируем ошибку
+                    print("Failed to fetch token: \(error.localizedDescription)")
                 }
             }
         }

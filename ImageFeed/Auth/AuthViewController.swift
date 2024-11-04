@@ -57,20 +57,9 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
         navigationController?.pushViewController(webViewController, animated: true)
     }
     
-    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        // Сначала сообщаем делегату о получении кода
-            self.delegate?.authViewController(self, didAuthenticateWithCode: code)
-        
-        OAuth2Service.shared.fetchOAuthToken1(code: code) { result in
-            switch result {
-            case .success(let token):
-                print("Successfully obtained token: \(token)")
-                self.oauth2TokenStorage.token = token
-            case .failure(let error):
-                print("Failed to fetch token: \(error)")
-                // Обработайте ошибку
-            }
-        }
+   func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
+        // сообщаем делегату о получении кода
+        self.delegate?.authViewController(self, didAuthenticateWithCode: code)
     }
     
     func didReceiveAuthorizationCode(_ code: String) {
