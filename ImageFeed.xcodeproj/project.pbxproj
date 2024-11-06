@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B06E54172CDB893600AB4236 /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = B06E54162CDB893600AB4236 /* ProgressHUD */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		B0CB28032CA81B7A0047D5E1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -65,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B06E54172CDB893600AB4236 /* ProgressHUD in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +130,7 @@
 			);
 			name = ImageFeed;
 			packageProductDependencies = (
+				B06E54162CDB893600AB4236 /* ProgressHUD */,
 			);
 			productName = ImageFeed;
 			productReference = B0CB27EC2CA81B790047D5E1 /* ImageFeed.app */;
@@ -208,6 +214,9 @@
 			);
 			mainGroup = B0CB27E32CA81B790047D5E1;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B06E54152CDB893600AB4236 /* XCRemoteSwiftPackageReference "ProgressHUD" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B0CB27ED2CA81B790047D5E1 /* Products */;
 			projectDirPath = "";
@@ -573,6 +582,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B06E54152CDB893600AB4236 /* XCRemoteSwiftPackageReference "ProgressHUD" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/relatedcode/ProgressHUD";
+			requirement = {
+				kind = exactVersion;
+				version = 14.1.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B06E54162CDB893600AB4236 /* ProgressHUD */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B06E54152CDB893600AB4236 /* XCRemoteSwiftPackageReference "ProgressHUD" */;
+			productName = ProgressHUD;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B0CB27E42CA81B790047D5E1 /* Project object */;
 }
