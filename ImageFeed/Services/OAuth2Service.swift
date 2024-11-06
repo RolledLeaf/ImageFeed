@@ -2,7 +2,8 @@ import Foundation
 
 final class OAuth2Service {
     static let shared = OAuth2Service()
-    init() {}
+    private init() {} //Синглтон
+    private let decoder = JSONDecoder()
     
     func fetchOAuthToken1(code: String, completion: @escaping (Result<String, Error>) -> Void) {
         print("Fetching OAuth token...")
@@ -52,7 +53,7 @@ final class OAuth2Service {
                 }
                 
                 do {
-                    let tokenResponse = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
+                    let tokenResponse = try self.decoder.decode(OAuthTokenResponseBody.self, from: data)
                     let token = tokenResponse.accessToken
                     // Сохраняем токен
                     OAuth2TokenStorage.shared.token = token
@@ -64,7 +65,7 @@ final class OAuth2Service {
             } else {
                 // Обработка ошибок от Unsplash
                 do {
-                    let errorResponse = try JSONDecoder().decode(ErrorResponse.self, from: data ?? Data())
+                    let errorResponse = try self.decoder.decode(ErrorResponse.self, from: data ?? Data())
                     print("Error from Unsplash: \(errorResponse.message)") // Логируем ошибку от Unsplash
                     completion(.failure(NSError(domain: "UnsplashError", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: errorResponse.message])))
                 } catch {
@@ -79,7 +80,7 @@ final class OAuth2Service {
 // Структура для декодирования ответа
 struct TokenResponse: Codable {
     let accessToken: String
-
+    
     enum CodingKeys: String, CodingKey {
         case accessToken = "access_token"
     }

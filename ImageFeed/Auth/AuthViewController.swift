@@ -59,7 +59,7 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
     
    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         // сообщаем делегату о получении кода
-        self.delegate?.authViewController(self, didAuthenticateWithCode: code)
+        delegate?.authViewController(self, didAuthenticateWithCode: code)
     }
     
     func didReceiveAuthorizationCode(_ code: String) {

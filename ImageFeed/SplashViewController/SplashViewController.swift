@@ -1,9 +1,8 @@
 import UIKit
 
 final class SplashViewController: UIViewController {
-    private let oauth2Service = OAuth2Service()
-    private let oauth2TokenStorage = OAuth2TokenStorage()
     
+    private let oauth2TokenStorage = OAuth2TokenStorage()
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -54,7 +53,7 @@ extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
         vc.dismiss(animated: true) { [weak self] in
             guard let self = self else { return }
-            self.oauth2Service.fetchOAuthToken1(code: code) { result in
+            OAuth2Service.shared.fetchOAuthToken1(code: code) { result in
                 switch result {
                 case .success(let token):
                     print("Token successfully fetched: \(token)")

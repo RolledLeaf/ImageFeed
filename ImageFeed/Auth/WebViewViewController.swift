@@ -104,7 +104,7 @@ final class WebViewViewController: UIViewController {
         navigationController?.popViewController(animated: true)
     }
     
-    enum WebViewConstants {
+    private enum WebViewConstants {
         static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
     }
 }
@@ -129,9 +129,9 @@ extension WebViewViewController: WKNavigationDelegate {
                  decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
         if let code = code(from: navigationAction) {
-                    // Вызываем метод делегата для передачи кода
-                    delegate?.webViewViewController(self, didAuthenticateWithCode: code)
-                    decisionHandler(.cancel) // Отменяем переход на этот URL
+            // Вызываем метод делегата для передачи кода
+            delegate?.webViewViewController(self, didAuthenticateWithCode: code)
+            decisionHandler(.cancel) // Отменяем переход на этот URL
         } else {
             decisionHandler(.allow)
         }
