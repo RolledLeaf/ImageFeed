@@ -5,12 +5,25 @@ final class OAuth2Service {
     private init() {} //Синглтон
     private let decoder = JSONDecoder()
     
+    private var currentAuthTask: URLSessionDataTask?
+    private var isRequestInProgress = false
+    
     func fetchOAuthToken1(code: String, completion: @escaping (Result<String, Error>) -> Void) {
         print("Fetching OAuth token...")
         print("Access Key: \(Constants.accessKey)")
         print("Secret Key: \(Constants.secretKey)")
         print("Redirect URI: \(Constants.redirectURI)")
         print("Authorization Code: \(code)")
+        
+        if isRequestInProgress {
+            if let currentCode = currentAuthTask?.originalRequest?.url?.query?.contains("code=\(code)"), currentCode {
+                currentAuthTask?.cancel()
+            } else {
+                return
+            }
+        }
+        
+        isRequestInProgress = true
         
         let parameters: [String: String] = [
             "client_id": Constants.accessKey,
@@ -30,7 +43,10 @@ final class OAuth2Service {
         request.httpMethod = "POST"
         request.httpBody = parameters.percentEncoded()
         
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        let task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+                    guard let self = self else { return }
+                    defer { self.isRequestInProgress = false } 
+            
             if let error = error {
                 print("Network error: \(error.localizedDescription)")
                 completion(.failure(error))
