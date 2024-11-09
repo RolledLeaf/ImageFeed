@@ -54,7 +54,7 @@ extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
         vc.dismiss(animated: true) { [weak self] in
             guard let self = self else { return }
-            ProgressHUD.animate()
+            UIBlockingProgressHUD.show()
             OAuth2Service.shared.fetchOAuthToken1(code: code) { result in
                 switch result {
                 case .success(let token):
@@ -65,7 +65,7 @@ extension SplashViewController: AuthViewControllerDelegate {
                 case .failure(let error):
                     print("Failed to fetch token: \(error.localizedDescription)")
                 }
-                ProgressHUD.dismiss()
+                UIBlockingProgressHUD.dismiss()
             }
         }
     }
