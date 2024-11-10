@@ -8,15 +8,55 @@ final class ProfileViewController: UIViewController {
     private let profileDescriptionLabel = UILabel()
     private let logoutButton = UIButton()
     private let oauth2TokenStorage = OAuth2TokenStorage()
+    private let profileService = ProfileService.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    
+        setupInitialUI()
+        
+        fetchUserProfile()
+    }
+    
+    private func fetchUserProfile() {
+          profileService.fetchProfile { [weak self] result in
+              DispatchQueue.main.async {
+                  switch result {
+                  case .success(let profile):
+                      self?.updateUI(with: profile)
+                  case .failure(let error):
+                      self?.showError(error)
+                  }
+              }
+          }
+      }
+    
+    private func updateUI(with profile: UserProfile) {
+        profileNameLabel.text = profile.name
+        profileIDLabel.text = "@\(profile.username)"
+        profileDescriptionLabel.text = profile.bio
+        //здесь должна быть функция загрузки аватара
+           
+       }
+    
+    private func showError(_ error: Error) {
+            let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+        }
+    
+    private func configureLabel(_ label: UILabel, text: String, fontSize: CGFloat, weight: UIFont.Weight, color: Colors) {
+        label.text = text
+        label.font = UIFont.systemFont(ofSize: fontSize, weight: weight)
+        label.textColor = UIColor(named: color.rawValue)
+    }
+    
+    private func setupInitialUI() {
         let uiElements = [profilePhotoView, profileNameLabel, profileIDLabel, profileDescriptionLabel, logoutButton]
         uiElements.forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
-        
         profilePhotoView.image = UIImage(named: "Photo")
         configureLabel(profileNameLabel, text: "Екатерина Новикова", fontSize: 23, weight: .bold, color: .nameColor)
         configureLabel(profileIDLabel, text: "@ekaterina_nov", fontSize: 13, weight: .regular, color: .idColor)
@@ -25,15 +65,10 @@ final class ProfileViewController: UIViewController {
         logoutButton.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
         logoutButton.tintColor = .logoutRed
         logoutButton.layer.cornerRadius = 0
-        
+    
         setupConstraints()
     }
     
-    private func configureLabel(_ label: UILabel, text: String, fontSize: CGFloat, weight: UIFont.Weight, color: Colors) {
-        label.text = text
-        label.font = UIFont.systemFont(ofSize: fontSize, weight: weight)
-        label.textColor = UIColor(named: color.rawValue)
-    }
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             // Констрейнты для фото профиля

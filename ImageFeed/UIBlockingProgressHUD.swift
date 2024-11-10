@@ -9,7 +9,7 @@ final class UIBlockingProgressHUD {
     static func show() {
         DispatchQueue.main.async {
             window?.isUserInteractionEnabled = false
-            ProgressHUD.animate()  // Отображаем индикатор загрузки
+            ProgressHUD.animate()
             print("UI has been blocked")
         }
     }
