@@ -31,7 +31,7 @@ final class ProfileViewController: UIViewController {
           }
       }
     
-    private func updateUI(with profile: UserProfile) {
+    private func updateUI(with profile: Profile) {
         profileNameLabel.text = profile.name
         profileIDLabel.text = "@\(profile.username)"
         profileDescriptionLabel.text = profile.bio

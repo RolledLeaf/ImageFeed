@@ -9,7 +9,7 @@ final class ProfileService {
     private var isRequestInProgress = false
     private var currentProfileTask: URLSessionDataTask?
     
-    func fetchProfile(completion: @escaping (Result<UserProfile, Error>) -> Void) {
+    func fetchProfile(completion: @escaping (Result<Profile, Error>) -> Void) {
         // Проверяем, выполняется ли запрос
         if isRequestInProgress {
             currentProfileTask?.cancel() // Отменяем предыдущий запрос, если идёт повторный
@@ -50,7 +50,13 @@ final class ProfileService {
             do {
                 let userProfile = try self?.decoder.decode(UserProfile.self, from: data)
                 if let userProfile = userProfile {
-                    completion(.success(userProfile))
+                    let profile = Profile(
+                        username: userProfile.username,
+                        name: userProfile.name,
+                        loginName: "@\(userProfile.username)",
+                        bio: userProfile.bio
+                    )
+                    completion(.success(profile))
                     print("User profile fetched successfully.")
                 }
             } catch {
@@ -73,4 +79,11 @@ struct UserProfile: Decodable {
     let name: String
     let bio: String?
     let location: String?
+}
+
+struct Profile {
+    let username: String      // Логин пользователя
+    let name: String          // Полное имя пользователя
+    let loginName: String     // Логин со знаком @
+    let bio: String?          // Описание профиля
 }
