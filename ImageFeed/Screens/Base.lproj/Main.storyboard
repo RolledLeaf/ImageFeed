@@ -13,7 +13,7 @@
         <!--TabBarViewController-->
         <scene sceneID="AX8-kL-XUp">
             <objects>
-                <tabBarController storyboardIdentifier="TabBarViewController" title="TabBarViewController" id="bOu-zR-j0M" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="TabBarViewController" title="TabBarViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="bOu-zR-j0M" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="LWl-Ig-gCV">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -246,11 +246,11 @@
     </scenes>
     <resources>
         <image name="0" width="1600" height="1059"/>
-        <image name="Active" width="30" height="26"/>
+        <image name="Active" width="29.333333969116211" height="26"/>
         <image name="Sharing 1" width="30" height="30"/>
-        <image name="backward arrow" width="9" height="16"/>
+        <image name="backward arrow" width="9" height="15.666666984558105"/>
         <image name="tab_editorial_active" width="20" height="22"/>
-        <image name="tab_profile_active" width="75" height="49"/>
+        <image name="tab_profile_active" width="24" height="24"/>
         <namedColor name="Background color">
             <color red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

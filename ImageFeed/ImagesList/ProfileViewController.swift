@@ -9,34 +9,29 @@ final class ProfileViewController: UIViewController {
     private let logoutButton = UIButton()
     private let oauth2TokenStorage = OAuth2TokenStorage()
     private let profileService = ProfileService.shared
+    var profile: Profile?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    
-        setupInitialUI()
         
-        fetchUserProfile()
+        setupInitialUI()
     }
-    
-    private func fetchUserProfile() {
-          profileService.fetchProfile { [weak self] result in
-              DispatchQueue.main.async {
-                  switch result {
-                  case .success(let profile):
-                      self?.updateUI(with: profile)
-                  case .failure(let error):
-                      self?.showError(error)
-                  }
-              }
-          }
-      }
+   
+    override func viewWillAppear(_ animated: Bool) {
+        
+        if let profile = profile {
+            print("Profile data: \(profile)")
+            updateUI(with: profile)  // Обновляем UI с данными профиля
+        } else {
+            print("Profile is nil")
+        }
+    }
     
     private func updateUI(with profile: Profile) {
         profileNameLabel.text = profile.name
         profileIDLabel.text = "@\(profile.username)"
         profileDescriptionLabel.text = profile.bio
         //здесь должна быть функция загрузки аватара
-           
        }
     
     private func showError(_ error: Error) {

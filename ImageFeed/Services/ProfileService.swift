@@ -26,6 +26,7 @@ final class ProfileService {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        print("Making network request with token: \(token)")
         
         isRequestInProgress = true // Устанавливаем флаг начала запроса
         currentProfileTask = urlSession.dataTask(with: request) { [weak self] data, response, error in
@@ -54,8 +55,8 @@ final class ProfileService {
                         username: userProfile.username,
                         name: userProfile.name,
                         loginName: "@\(userProfile.username)",
-                        bio: userProfile.bio
-                    )
+                        bio: userProfile.bio)
+                    print("Successfully fetched profile: \(userProfile)")
                     completion(.success(profile))
                     print("User profile fetched successfully.")
                 }
