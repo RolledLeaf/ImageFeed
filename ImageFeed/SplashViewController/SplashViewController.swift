@@ -54,42 +54,25 @@ final class SplashViewController: UIViewController {
     }
 
     private func switchToTabBarController() {
-        print("Attempting to switch to TabBarViewController...")
-
-        // Загружаем TabBarController из Storyboard
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        guard let tabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarViewController") as? UITabBarController else {
-            print("Failed to instantiate TabBarViewController.")
-            return
-        }
-        print("TabBarViewController instantiated successfully.")
-
-        // Находим ProfileViewController в массиве viewControllers таб-бара
-        if let profileViewController = tabBarController.viewControllers?.first(where: { $0 is ProfileViewController }) as? ProfileViewController {
-            print("Found ProfileViewController within TabBarViewController.")
-            profileViewController.profile = self.profile
-            print("Profile data passed to ProfileViewController.")
-        } else {
-            print("Failed to find ProfileViewController within TabBarViewController.")
-        }
-
-        // Устанавливаем TabBarController как корневой контроллер окна
         guard let window = UIApplication.shared.windows.first else {
-            print("Failed to access main window.")
+            assertionFailure("Invalid window configuration")
             return
         }
-        window.rootViewController = tabBarController
-        window.makeKeyAndVisible()
-        print("TabBarViewController set as root view controller.")
 
-        // Добавляем анимацию перехода
-        UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromRight, animations: nil) { _ in
-            print("Transition animation to TabBarViewController completed.")
+        // Загружаем TabBarController из Storyboard и устанавливаем profile
+        let storyboard = UIStoryboard(name: "Main", bundle: .main)
+        if let tabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarViewController") as? CustomTabBarController {
+            tabBarController.profile = profile
+
+            UIView.transition(with: window, duration: 0.5, options: .transitionFlipFromRight, animations: {
+                window.rootViewController = tabBarController
+            }, completion: nil)
+            print("CustomTabBarController успешно инициализирован")
+        } else {
+            print("Ошибка: не удалось инициализировать CustomTabBarController")
         }
     }
     
-    
-        
     
     private func handleError(_ error: Error) {
            // Обработка ошибки, например, показываем сообщение пользователю

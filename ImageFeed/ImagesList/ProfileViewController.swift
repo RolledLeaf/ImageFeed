@@ -15,17 +15,21 @@ final class ProfileViewController: UIViewController {
         super.viewDidLoad()
         
         setupInitialUI()
+        loadProfile()
     }
    
-    override func viewWillAppear(_ animated: Bool) {
-        
-        if let profile = profile {
-            print("Profile data: \(profile)")
-            updateUI(with: profile)  // Обновляем UI с данными профиля
-        } else {
-            print("Profile is nil")
+    private func loadProfile() {
+            ProfileService.shared.fetchProfile { [weak self] result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let profile):
+                        self?.updateUI(with: profile)
+                    case .failure(let error):
+                        self?.showError(error)
+                    }
+                }
+            }
         }
-    }
     
     private func updateUI(with profile: Profile) {
         profileNameLabel.text = profile.name
@@ -53,7 +57,7 @@ final class ProfileViewController: UIViewController {
             view.addSubview($0)
         }
         profilePhotoView.image = UIImage(named: "Photo")
-        configureLabel(profileNameLabel, text: "Екатерина Новикова", fontSize: 23, weight: .bold, color: .nameColor)
+        configureLabel(profileNameLabel, text: profile?.name ?? "T", fontSize: 23, weight: .bold, color: .nameColor)
         configureLabel(profileIDLabel, text: "@ekaterina_nov", fontSize: 13, weight: .regular, color: .idColor)
         configureLabel(profileDescriptionLabel, text: "Hello, world!", fontSize: 13, weight: .regular, color: .nameColor)
         logoutButton.setImage(UIImage(systemName: "ipad.and.arrow.forward"), for: .normal)
