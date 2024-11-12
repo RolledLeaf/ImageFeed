@@ -2,11 +2,13 @@ import Foundation
 
 final class OAuth2Service {
     static let shared = OAuth2Service()
-    private init() {} //Синглтон
+   
     private let decoder = JSONDecoder()
     
     private var currentAuthTask: URLSessionDataTask?
     private var isRequestInProgress = false
+    
+    private init() {} 
     
     func fetchOAuthToken1(code: String, completion: @escaping (Result<String, Error>) -> Void) {
         print("Fetching OAuth token...")

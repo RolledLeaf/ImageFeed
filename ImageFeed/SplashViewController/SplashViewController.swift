@@ -4,9 +4,38 @@ import ProgressHUD
 final class SplashViewController: UIViewController {
     private var profileService: ProfileService = ProfileService.shared
     private var profile: Profile?
+    private var username: String?
     
     
     private let oauth2TokenStorage = OAuth2TokenStorage()
+    
+    override func viewDidLoad() {
+            super.viewDidLoad()
+            
+            // Пример: извлечение username из сохранённых данных или авторизации
+            if let username = username {
+                // Вызов метода для получения изображения профиля
+                fetchProfileImage(for: username)
+            }
+        }
+    
+    func fetchProfileImage(for username: String) {
+            ProfileImageService.shared.fetchProfileImageURL(username: username) { [weak self] result in
+                switch result {
+                case .success(let imageURL):
+                    print("Image URL fetched: \(imageURL)")
+                    // Здесь можно обновить UI, например, загрузить изображение с этого URL
+                    self?.updateProfileImage(imageURL)
+                    
+                case .failure(let error):
+                    print("Failed to fetch image URL: \(error.localizedDescription)")
+                    // Можно обработать ошибку, показать пользователю сообщение
+                }
+            }
+        }
+    
+    
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
