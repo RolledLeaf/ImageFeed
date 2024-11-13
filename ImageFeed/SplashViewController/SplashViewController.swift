@@ -9,6 +9,32 @@ final class SplashViewController: UIViewController {
     
     private let oauth2TokenStorage = OAuth2TokenStorage()
     
+    
+    override func viewDidLoad() {
+            super.viewDidLoad()
+            
+            ProfileService.shared.fetchProfile { [weak self] result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let profile):
+                        print("Fetched profile for username: \(profile.username)")
+                        
+                        // Вызываем fetchProfileImageURL после получения username
+                        ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { imageResult in
+                            switch imageResult {
+                            case .success(let avatarURL):
+                                print("Successfully fetched avatar URL: \(avatarURL)")
+                            case .failure(let error):
+                                print("Failed to fetch avatar URL: \(error)")
+                            }
+                        }
+                    case .failure(let error):
+                        print("Failed to fetch profile: \(error)")
+                    }
+                }
+            }
+        }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -54,6 +80,8 @@ final class SplashViewController: UIViewController {
             }
         }
     }
+    
+    
 
     private func switchToTabBarController() {
         guard let window = UIApplication.shared.windows.first else {
@@ -74,6 +102,7 @@ final class SplashViewController: UIViewController {
             print("Ошибка: не удалось инициализировать CustomTabBarController")
         }
     }
+    
     
     
     private func handleError(_ error: Error) {

@@ -21,35 +21,23 @@ final class ProfileViewController: UIViewController {
   
     
     private func loadProfile() {
-        ProfileService.shared.fetchProfile { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let profile):
-                    self?.updateUI(with: profile)
-                case .failure(let error):
-                    self?.showError(error)
+            ProfileService.shared.fetchProfile { [weak self] result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let profile):
+                        self?.updateUI(with: profile)
+                    case .failure(let error):
+                        self?.showError(error)
+                    }
                 }
             }
         }
-    }
 
     private func updateUI(with profile: Profile) {
         profileNameLabel.text = profile.name
         profileIDLabel.text = "@\(profile.username)"
         profileDescriptionLabel.text = profile.bio
 
-        // Загрузка URL аватара
-        ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let avatarURL):
-                    // Метод для загрузки изображения из URL в avatarImageView
-                    self?.profilePhotoView.loadImage(from: avatarURL)
-                case .failure(let error):
-                    print("Failed to fetch profile image URL: \(error)")
-                }
-            }
-        }
     }
     
     private func showError(_ error: Error) {
@@ -128,15 +116,4 @@ final class ProfileViewController: UIViewController {
     }
 }
 
-extension UIImageView {
-    func loadImage(from urlString: String) {
-        guard let url = URL(string: urlString) else { return }
-        URLSession.shared.dataTask(with: url) { data, _, error in
-            if let data = data, error == nil, let image = UIImage(data: data) {
-                DispatchQueue.main.async {
-                    self.image = image
-                }
-            }
-        }.resume()
-    }
-}
+

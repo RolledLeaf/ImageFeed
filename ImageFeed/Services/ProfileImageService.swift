@@ -3,6 +3,7 @@ import Foundation
 final class ProfileImageService {
     
     static let shared = ProfileImageService()  // Синглтон
+    static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
     
     private let urlSession: URLSession = .shared
     private let decoder = JSONDecoder()
@@ -44,6 +45,11 @@ final class ProfileImageService {
                     self?.avatarURL = profileImageURL
                     print("Profile image URL fetched: \(profileImageURL)")
                     completion(.success(profileImageURL))
+                    NotificationCenter.default                                     // 1
+                        .post(                                                     // 2
+                            name: ProfileImageService.didChangeNotification,       // 3
+                            object: self,                                          // 4
+                            userInfo: ["URL": profileImageURL])                    // 5
                 } else {
                     print("No profile image URL found in response")
                     completion(.failure(ProfileImageServiceError.noProfileImage))

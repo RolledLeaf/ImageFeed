@@ -12,7 +12,7 @@ final class ProfileService {
     func fetchProfile(completion: @escaping (Result<Profile, Error>) -> Void) {
         // Проверяем, выполняется ли запрос
         if isRequestInProgress {
-            currentProfileTask?.cancel() // Отменяем предыдущий запрос, если идёт повторный
+            currentProfileTask?.cancel()
             print("Previous request canceled.")
         }
         guard let token = OAuth2TokenStorage.shared.token else {
@@ -28,9 +28,8 @@ final class ProfileService {
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         print("Making network request with token: \(token)")
         
-        isRequestInProgress = true // Устанавливаем флаг начала запроса
+        isRequestInProgress = true
         currentProfileTask = urlSession.dataTask(with: request) { [weak self] data, response, error in
-            // Сбрасываем флаг выполнения после завершения запроса
             self?.isRequestInProgress = false
             self?.currentProfileTask = nil
             
@@ -55,10 +54,10 @@ final class ProfileService {
                         username: userProfile.username,
                         name: userProfile.name,
                         loginName: "@\(userProfile.username)",
-                        bio: userProfile.bio)
+                        bio: userProfile.bio
+                    )
                     print("Successfully fetched profile: \(userProfile)")
                     completion(.success(profile))
-                    print("User profile fetched successfully.")
                 }
             } catch {
                 completion(.failure(error))
