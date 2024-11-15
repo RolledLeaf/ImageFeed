@@ -9,7 +9,6 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
     
     private let loginIcon = UIImageView()
     private let loginButton = UIButton()
-    private let oauth2TokenStorage = OAuth2TokenStorage()
     weak var delegate: AuthViewControllerDelegate?
     
     override func viewDidLoad() {
@@ -63,12 +62,61 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
     }
     
     func didReceiveAuthorizationCode(_ code: String) {
-        print("Received authorization code: \(code)")
-        
+        guard !code.isEmpty else {
+            showAlert(title: "Ошибка авторизации", message: "Не удалось получить код авторизации. Попробуйте ещё раз.")
+            return
+        }
+
+        // 2. Отправляем запрос на получение токена
+        OAuth2Service.shared.fetchOAuthToken1(code: code) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let token):
+                    print("Получен токен: \(token)")
+                case .failure(let error):
+                    self?.handleAuthError(error)
+                }
+            }
+        }
     }
     
-    func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
-        navigationController?.popViewController(animated: true)
-        print("User canceled the authorization")
+    private func handleAuthError(_ error: Error) {
+        switch error {
+        case AuthError.invalidResponse:
+            showAlert(title: "Ошибка сервера", message: "Сервер вернул некорректный ответ. Попробуйте позже.")
+        case AuthError.serverError(let code):
+            showAlert(title: "Ошибка сервера", message: "Ошибка на сервере (код: \(code)).")
+        case AuthError.invalidData:
+            showAlert(title: "Ошибка данных", message: "Данные авторизации некорректны. Попробуйте ещё раз.")
+        case AuthError.networkError:
+            showAlert(title: "Сетевая ошибка", message: "Проверьте подключение к интернету.")
+        case AuthError.unknown:
+            showAlert(title: "Неизвестная ошибка", message: "Что-то пошло не так. Попробуйте ещё раз.")
+            default :
+            return
+        }
     }
+      
+      func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
+          navigationController?.popViewController(animated: true)
+          print("User canceled the authorization")
+      }
+      
+      private func showAlert(title: String, message: String) {
+          let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+          let okAction = UIAlertAction(title: "Ок", style: .default)
+          alertController.addAction(okAction)
+          present(alertController, animated: true)
+          let retryAction = UIAlertAction(title: "Повторить", style: .default) { _ in
+          }
+          alertController.addAction(retryAction)
+      }
+  }
+
+enum AuthError: Error {
+    case invalidResponse
+    case serverError(Int) 
+    case invalidData
+    case networkError
+    case unknown
 }
