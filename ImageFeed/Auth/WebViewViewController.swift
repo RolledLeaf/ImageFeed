@@ -7,10 +7,17 @@ final class WebViewViewController: UIViewController {
     private let backButton = UIButton(type: .custom)
     weak var delegate: WebViewViewControllerDelegate?
     private let progressBar = UIProgressView()
+    private var estimatedProgressObservation: NSKeyValueObservation?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
+        estimatedProgressObservation = webView.observe(
+            \.estimatedProgress,
+            options: [.new] 
+        ) { [weak self] _, _ in
+            guard let self = self else { return }
+            self.updateProgress()
+        }
         webView.navigationDelegate = self
         setupWebView()
         setupBackButton()
@@ -19,21 +26,9 @@ final class WebViewViewController: UIViewController {
         navigationItem.hidesBackButton = true
     }
     
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == #keyPath(WKWebView.estimatedProgress) {
-            updateProgress()
-        } else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-        }
-    }
-    
     private func updateProgress() {
         progressBar.progress = Float(webView.estimatedProgress)
         progressBar.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
-    }
-    
-    deinit {
-        webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
     }
     
     private func loadAuthView() {

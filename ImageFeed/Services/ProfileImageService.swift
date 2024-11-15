@@ -6,7 +6,6 @@ final class ProfileImageService {
     static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
     
     private let urlSession: URLSession = .shared
-    private let decoder = JSONDecoder()
     
     private(set) var avatarURL: String?  // Свойство для хранения URL изображения профиля
     
@@ -14,6 +13,8 @@ final class ProfileImageService {
     
     func fetchProfileImageURL(username: String, _ completion: @escaping (Result<String, Error>) -> Void) {
         print("Fetching profile image URL for username: \(username)")
+        
+        // Формирование URL и проверка на валидность
         guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {
             completion(.failure(ProfileImageServiceError.invalidURL))
             return
@@ -24,41 +25,29 @@ final class ProfileImageService {
         request.httpMethod = "GET"
         print("Sending request to URL: \(url)")
         
-        urlSession.dataTask(with: request) { [weak self] data, response, error in
-            if let error = error {
-                print("Error fetching profile image URL: \(error.localizedDescription)")
-                completion(.failure(error))
-                return
-            }
-            
-            guard let data = data,
-                  let httpResponse = response as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
-                print("Invalid response or status code")
-                completion(.failure(ProfileImageServiceError.invalidResponse))
-                return
-            }
-            
-            do {
-                let userResult = try self?.decoder.decode(UserResult.self, from: data)
-                if let profileImageURL = userResult?.profileImage?.small {
+        // Используем objectTask из расширения URLSession
+        urlSession.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
+            switch result {
+            case .success(let userResult):
+                if let profileImageURL = userResult.profileImage?.small {
                     self?.avatarURL = profileImageURL
                     print("Profile image URL fetched: \(profileImageURL)")
                     completion(.success(profileImageURL))
-                    NotificationCenter.default                                     // 1
-                        .post(                                                     // 2
-                            name: ProfileImageService.didChangeNotification,       // 3
-                            object: self,                                          // 4
-                            userInfo: ["URL": profileImageURL])                    // 5
+                    
+                    NotificationCenter.default.post(
+                        name: ProfileImageService.didChangeNotification,
+                        object: self,
+                        userInfo: ["URL": profileImageURL]
+                    )
                 } else {
                     print("No profile image URL found in response")
                     completion(.failure(ProfileImageServiceError.noProfileImage))
                 }
-            } catch {
-                print("Decoding error: \(error.localizedDescription)")
+            case .failure(let error):
+                print("Error fetching profile image URL: \(error.localizedDescription)")
                 completion(.failure(error))
             }
-        }.resume()
+        }
     }
 }
 
