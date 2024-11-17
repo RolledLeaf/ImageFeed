@@ -4,16 +4,45 @@ import ProgressHUD
 final class SplashViewController: UIViewController {
     private var profileService: ProfileService = ProfileService.shared
     private var profile: Profile?
-    
+    private var username: String?
+    private var didAuthenticateOnce = false
     
     private let oauth2TokenStorage = OAuth2TokenStorage()
+    
+    
+    override func viewDidLoad() {
+            super.viewDidLoad()
+            
+            ProfileService.shared.fetchProfile { [weak self] result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let profile):
+                        print("Fetched profile for username: \(profile.username)")
+                        
+                        
+                        // Вызываем fetchProfileImageURL после получения username
+                        ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { imageResult in
+                            switch imageResult {
+                            case .success(let avatarURL):
+                                print("Successfully fetched avatar URL: \(avatarURL)")
+                            case .failure(let error):
+                                print("Failed to fetch avatar URL: \(error)")
+                            }
+                        }
+                    case .failure(let error):
+                        print("Failed to fetch profile: \(error)")
+                    }
+                }
+            }
+        }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        // Проверяем наличие токена
         if let token = oauth2TokenStorage.token {
-            fetchProfileData(token)
-            switchToTabBarController()
+            if profile == nil { // Вызываем fetchProfile только если профиль ещё не загружен
+                fetchProfileData(token)
+            }
             print("Token found: \(token)")
         } else {
             showAuthenticationScreen()
@@ -31,7 +60,8 @@ final class SplashViewController: UIViewController {
     }
     
     func didAuthenticate(token: String) {
-           // Запрос данных профиля после авторизации
+        guard !didAuthenticateOnce else { return }
+           didAuthenticateOnce = true
            fetchProfileData(token)
        }
     
@@ -43,15 +73,17 @@ final class SplashViewController: UIViewController {
                 case .success(let profile):
                     print("Profile successfully fetched: \(profile)")
                     self?.profile = profile
-                    self?.switchToTabBarController()  // Переход на TabBarController после получения данных профиля
+                    self?.switchToTabBarController() // Переход к TabBarController здесь
 
                 case .failure(let error):
                     print("Error fetching profile: \(error.localizedDescription)")
-                    self?.handleError(error)  // Обработка ошибки получения профиля
+                    self?.handleError(error)
                 }
             }
         }
     }
+    
+    
 
     private func switchToTabBarController() {
         guard let window = UIApplication.shared.windows.first else {
@@ -72,6 +104,7 @@ final class SplashViewController: UIViewController {
             print("Ошибка: не удалось инициализировать CustomTabBarController")
         }
     }
+    
     
     
     private func handleError(_ error: Error) {
