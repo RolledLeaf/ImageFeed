@@ -2,7 +2,7 @@ import Foundation
 
 final class ProfileImageService {
     
-    static let shared = ProfileImageService()  // Синглтон
+    static let shared = ProfileImageService()
     static let didChangeNotification = Notification.Name("ProfileImageDidChange")
     
     private let urlSession: URLSession = .shared
@@ -33,14 +33,13 @@ final class ProfileImageService {
                 if let profileImageURL = userResult.profileImage?.small {
                     self?.avatarURL = profileImageURL
                     print("Profile image URL fetched: \(profileImageURL)")
-                    
-                    // Отправка уведомления с URL
-                    NotificationCenter.default.post(
-                        name: ProfileImageService.didChangeNotification,
-                        object: nil,
-                        userInfo: ["URL": profileImageURL]
-                    )
-                    print("Notification sent with URL: \(profileImageURL)")
+                        NotificationCenter.default.post(
+                            name: ProfileImageService.didChangeNotification,
+                            object: nil,
+                            userInfo: ["URL": profileImageURL]
+                        )
+                        print("Notification sent with URL: \(profileImageURL)")
+
                     completion(.success(profileImageURL))
                 } else {
                     print("No profile image URL found in response: \(userResult)")

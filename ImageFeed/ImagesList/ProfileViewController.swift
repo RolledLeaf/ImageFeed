@@ -2,6 +2,16 @@ import UIKit
 import Kingfisher
 final class ProfileViewController: UIViewController {
     
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        setupNotificationObserver()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupNotificationObserver()
+    }
+    
     private let profilePhotoView = UIImageView()
     private let profileNameLabel = UILabel()
     private let profileIDLabel = UILabel()
@@ -12,27 +22,34 @@ final class ProfileViewController: UIViewController {
     private let profileImageService = ProfileImageService.shared
     private var profileImageServiceObserver: NSObjectProtocol?
     var profile: Profile?
-    
+    private var isObserverAdded = false
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(updateAvatar),
-            name: ProfileImageService.didChangeNotification,
-            object: nil        )
         
         setupInitialUI()
         loadProfile()
-        
-        
     }
     
+    private func setupNotificationObserver() {
+        guard !isObserverAdded else { return }
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateAvatar(_:)),
+            name: ProfileImageService.didChangeNotification,
+            object: nil
+        )
+        isObserverAdded = true
+        print("Observer added in init")
+        
+    }
     deinit {
-          NotificationCenter.default.removeObserver(self)
-          print("Observer removed.")
-      }
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    
+    
     
     @objc private func updateAvatar(_ notification: Notification) {
         print("updateAvatar called.")
@@ -42,11 +59,27 @@ final class ProfileViewController: UIViewController {
             print("Failed to retrieve avatar URL from notification.")
             return
         }
-
-        profilePhotoView.kf.setImage(with: avatarURL, placeholder: UIImage(named: "photo"))
-        print("Avatar image updated from URL: \(avatarURL)")
+        
+        print("Received avatar URL in notification: \(avatarURLString)")
+        
+        DispatchQueue.main.async {
+            self.profilePhotoView.kf.setImage(with: avatarURL,
+                                              placeholder: UIImage(named: "photo"),
+                                              options: [
+                                                .transition(.fade(0.2)), // Анимация появления
+                                                .cacheOriginalImage // Сохранение оригинального изображения в кэше
+                                            ],
+                                              completionHandler: { result in
+                switch result {
+                case .success:
+                    print("Avatar image loaded successfully")
+                case .failure(let error):
+                    print("Failed to load avatar image: \(error.localizedDescription)")
+                }
+            }
+            )
+        }
     }
-    
     
     private func loadProfile() {
         ProfileService.shared.fetchProfile { [weak self] result in
@@ -86,7 +119,7 @@ final class ProfileViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
-        profilePhotoView.image = UIImage(named: "Photo")
+        
         configureLabel(profileNameLabel, text: profile?.name ?? "T", fontSize: 23, weight: .bold, color: .nameColor)
         configureLabel(profileIDLabel, text: "@ekaterina_nov", fontSize: 13, weight: .regular, color: .idColor)
         configureLabel(profileDescriptionLabel, text: "Hello, world!", fontSize: 13, weight: .regular, color: .nameColor)
