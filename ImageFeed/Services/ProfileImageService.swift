@@ -3,7 +3,7 @@ import Foundation
 final class ProfileImageService {
     
     static let shared = ProfileImageService()  // Синглтон
-    static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
+    static let didChangeNotification = Notification.Name("ProfileImageDidChange")
     
     private let urlSession: URLSession = .shared
     
@@ -29,25 +29,28 @@ final class ProfileImageService {
         urlSession.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
             switch result {
             case .success(let userResult):
+                print("Response received: \(userResult)")
                 if let profileImageURL = userResult.profileImage?.small {
                     self?.avatarURL = profileImageURL
                     print("Profile image URL fetched: \(profileImageURL)")
-                    completion(.success(profileImageURL))
                     
+                    // Отправка уведомления с URL
                     NotificationCenter.default.post(
                         name: ProfileImageService.didChangeNotification,
-                        object: self,
+                        object: nil,
                         userInfo: ["URL": profileImageURL]
                     )
+                    print("Notification sent with URL: \(profileImageURL)")
+                    completion(.success(profileImageURL))
                 } else {
-                    print("No profile image URL found in response")
+                    print("No profile image URL found in response: \(userResult)")
                     completion(.failure(ProfileImageServiceError.noProfileImage))
                 }
             case .failure(let error):
                 print("Error fetching profile image URL: \(error.localizedDescription)")
                 completion(.failure(error))
             }
-        }
+        } .resume()
     }
 }
 
@@ -70,3 +73,4 @@ enum ProfileImageServiceError: Error {
     case invalidResponse
     case noProfileImage
 }
+

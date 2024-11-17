@@ -10,10 +10,7 @@ final class ProfileService {
     
     func fetchProfile(completion: @escaping (Result<Profile, Error>) -> Void) {
         // Проверяем, выполняется ли запрос
-        if isRequestInProgress {
-            currentProfileTask?.cancel()
-            print("Previous request canceled.")
-        }
+      
         guard let token = OAuth2TokenStorage.shared.token else {
             completion(.failure(ProfileServiceError.noToken))
             return

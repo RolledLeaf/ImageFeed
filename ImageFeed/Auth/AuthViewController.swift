@@ -67,7 +67,6 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
             return
         }
 
-        // 2. Отправляем запрос на получение токена
         OAuth2Service.shared.fetchOAuthToken1(code: code) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
