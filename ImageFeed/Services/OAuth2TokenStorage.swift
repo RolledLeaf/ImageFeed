@@ -1,5 +1,6 @@
 import Foundation
 import WebKit
+import SwiftKeychainWrapper
 
 //Упраление хранением токена
 final class OAuth2TokenStorage {
@@ -10,17 +11,31 @@ final class OAuth2TokenStorage {
     
     var token: String? {
         get {
-            return UserDefaults.standard.string(forKey: tokenKey)
+            return KeychainWrapper.standard.string(forKey: tokenKey)
         }
         set {
-            UserDefaults.standard.setValue(newValue, forKey: tokenKey)
-            print("Token saved: \(newValue ?? "")")
+            if let newValue = newValue {
+                let isSaved = KeychainWrapper.standard.set(newValue, forKey: tokenKey)
+                if isSaved {
+                    print("Token \(newValue) saved to keychain")
+                } else {
+                    print("Failed to save token to keychain")
+                }
+            } else {
+                let isSaved = KeychainWrapper.standard.removeObject(forKey: tokenKey)
+                if isSaved {
+                    print("Token \(tokenKey) removed from keychain")
+                } else {
+                    print("Failed to remove token from keychain")
+                }
+                print("Token saved: \(newValue ?? "")")
+            }
+            
         }
-        
     }
     
     func clearToken() {
-        UserDefaults.standard.removeObject(forKey: tokenKey)
+        let isRevoved = KeychainWrapper.standard.removeObject(forKey: tokenKey)
         print("Token removed: \(tokenKey)")
     }
     

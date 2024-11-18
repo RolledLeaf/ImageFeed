@@ -13,24 +13,19 @@ final class SplashViewController: UIViewController {
     override func viewDidLoad() {
             super.viewDidLoad()
             
-            ProfileService.shared.fetchProfile { [weak self] result in
+        guard let token = oauth2TokenStorage.token else {
+                showAuthenticationScreen()
+                return
+            }
+            
+            fetchProfileAndAvatar { [weak self] result in
                 DispatchQueue.main.async {
                     switch result {
-                    case .success(let profile):
-                        print("Fetched profile for username: \(profile.username)")
-                        
-                        
-                        // Вызываем fetchProfileImageURL после получения username
-                        ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { imageResult in
-                            switch imageResult {
-                            case .success(let avatarURL):
-                                print("Successfully fetched avatar URL: \(avatarURL)")
-                            case .failure(let error):
-                                print("Failed to fetch avatar URL: \(error)")
-                            }
-                        }
+                    case .success:
+                        self?.switchToTabBarController()
                     case .failure(let error):
-                        print("Failed to fetch profile: \(error)")
+                        print("Error fetching profile and avatar: \(error.localizedDescription)")
+                        self?.handleError(error)
                     }
                 }
             }
@@ -62,7 +57,16 @@ final class SplashViewController: UIViewController {
     func didAuthenticate(token: String) {
         guard !didAuthenticateOnce else { return }
            didAuthenticateOnce = true
-           fetchProfileData(token)
+           fetchProfileAndAvatar(completion: { [weak self] result in
+            switch result {
+            case .success:
+                print("Profile and avatar successfully fetched")
+                self?.switchToTabBarController() 
+            case .failure(let error):
+                            print("Error fetching profile and avatar after authentication: \(error.localizedDescription)")
+                            self?.handleError(error)
+            }
+        })
        }
     
     private func fetchProfileData(_ token: String) {
@@ -73,12 +77,35 @@ final class SplashViewController: UIViewController {
                 case .success(let profile):
                     print("Profile successfully fetched: \(profile)")
                     self?.profile = profile
+                    
                     self?.switchToTabBarController() // Переход к TabBarController здесь
 
                 case .failure(let error):
                     print("Error fetching profile: \(error.localizedDescription)")
                     self?.handleError(error)
                 }
+            }
+        }
+    }
+    
+    private func fetchProfileAndAvatar(completion: @escaping (Result<Profile, Error>) -> Void) {
+        profileService.fetchProfile { [weak self] result in
+            switch result {
+            case .success(let profile):
+                self?.profile = profile
+                ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { imageResult in
+                    switch imageResult {
+                    case .success(let avatarURL):
+                        print("Fetched avatar URL: \(avatarURL)")
+                        NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: nil, userInfo: ["URL": avatarURL])
+                        completion(.success(profile))
+                    case .failure(let error):
+                        print("Failed to fetch avatar URL: \(error.localizedDescription)")
+                        completion(.failure(error))
+                    }
+                }
+            case .failure(let error):
+                completion(.failure(error))
             }
         }
     }
