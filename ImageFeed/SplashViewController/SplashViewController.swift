@@ -11,22 +11,7 @@ final class SplashViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard let token = oauth2TokenStorage.token else {
-                showAuthenticationScreen()
-                return
-            }
-            
-            fetchProfileAndAvatar { [weak self] result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success:
-                        self?.switchToTabBarController()
-                    case .failure(let error):
-                        print("Error fetching profile and avatar: \(error.localizedDescription)")
-                        self?.handleError(error)
-                    }
-                }
-            }
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
