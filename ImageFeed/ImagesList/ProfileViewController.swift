@@ -46,6 +46,7 @@ final class ProfileViewController: UIViewController {
     }
     deinit {
         NotificationCenter.default.removeObserver(self)
+        print("Observer removed in deinit")
     }
     
     
