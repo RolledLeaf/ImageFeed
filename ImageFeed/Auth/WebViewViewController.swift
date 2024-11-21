@@ -13,7 +13,7 @@ final class WebViewViewController: UIViewController {
         super.viewDidLoad()
         estimatedProgressObservation = webView.observe(
             \.estimatedProgress,
-            options: [.new] 
+             options: [.new]
         ) { [weak self] _, _ in
             guard let self = self else { return }
             self.updateProgress()
@@ -104,7 +104,6 @@ final class WebViewViewController: UIViewController {
     }
 }
 
-
 private func code(from navigationAction: WKNavigationAction) -> String? {
     if
         let url = navigationAction.request.url,
@@ -124,9 +123,8 @@ extension WebViewViewController: WKNavigationDelegate {
                  decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
         if let code = code(from: navigationAction) {
-            // Вызываем метод делегата для передачи кода
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
-            decisionHandler(.cancel) // Отменяем переход на этот URL
+            decisionHandler(.cancel)
         } else {
             decisionHandler(.allow)
         }

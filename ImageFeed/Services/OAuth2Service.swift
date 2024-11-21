@@ -44,7 +44,7 @@ final class OAuth2Service {
         request.httpBody = parameters.percentEncoded()
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         
-        // Используем objectTask<T>
+        
         currentAuthTask = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<TokenResponse, Error>) in
             guard let self = self else { return }
             defer { self.isRequestInProgress = false }
@@ -61,7 +61,6 @@ final class OAuth2Service {
                 completion(.failure(error))
             }
         }
-        
         currentAuthTask?.resume()
     }
 }

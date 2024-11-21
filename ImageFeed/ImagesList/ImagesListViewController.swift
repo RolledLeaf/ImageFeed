@@ -2,7 +2,6 @@ import UIKit
 
 final class ImagesListViewController: UIViewController {
     
-    
     @IBOutlet private var tableView: UITableView!
     
     private let showSingleImageSegueIdentifier: String = "ShowSingleImage"
@@ -30,7 +29,6 @@ final class ImagesListViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        //Проверка ID сигвея
         if segue.identifier == showSingleImageSegueIdentifier {
             guard
                 let viewController = segue.destination as? SingleImageViewController,
