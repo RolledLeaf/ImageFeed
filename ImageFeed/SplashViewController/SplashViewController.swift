@@ -10,11 +10,12 @@ final class SplashViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+        //Сценарий "пользователь уже авторизован"
         if let token = oauth2TokenStorage.token {
             if profile == nil {
                 fetchProfileAndAvatar { [weak self] result in
@@ -28,14 +29,10 @@ final class SplashViewController: UIViewController {
                         }
                     }
                 }
-            } else {
-                print("Profile is already loaded.")
-                switchToTabBarController()
             }
-            print("Token found: \(token)")
         } else {
             showAuthenticationScreen()
-            print("Token not found")
+            print("Token not found, starting authentication.")
         }
     }
     
@@ -48,24 +45,8 @@ final class SplashViewController: UIViewController {
         .lightContent
     }
     
-    func didAuthenticate(token: String) {
-        guard !didAuthenticateOnce else { return }
-        didAuthenticateOnce = true
-        fetchProfileAndAvatar { [weak self] result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success:
-                        self?.switchToTabBarController()
-                    case .failure(let error):
-                        print("Error fetching profile and avatar after authentication: \(error.localizedDescription)")
-                        self?.handleError(error)
-                    }
-                }
-            }
-        }
-    
-    
     private func fetchProfileAndAvatar(completion: @escaping (Result<Profile, Error>) -> Void) {
+        print("Fetching profile and avatar...")
         profileService.fetchProfile { [weak self] result in
             switch result {
             case .success(let profile):
@@ -74,8 +55,7 @@ final class SplashViewController: UIViewController {
                     switch imageResult {
                     case .success(let avatarURL):
                         print("Fetched avatar URL: \(avatarURL)")
-                        NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: nil, userInfo: ["URL": avatarURL])
-                        print("Notification posted")
+                        //Здесь была отправка уведомления
                         completion(.success(profile))
                     case .failure(let error):
                         print("Failed to fetch avatar URL: \(error.localizedDescription)")
@@ -88,33 +68,14 @@ final class SplashViewController: UIViewController {
         }
     }
     
-    private func fetchProfileData(_ token: String) {
-        print("Starting to fetch profile data...")
-        profileService.fetchProfile { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let profile):
-                    print("Profile successfully fetched: \(profile)")
-                    self?.profile = profile
-                    self?.switchToTabBarController() // Переход к TabBarController здесь
-                    
-                case .failure(let error):
-                    print("Error fetching profile: \(error.localizedDescription)")
-                    self?.handleError(error)
-                }
-            }
-        }
-    }
-    
-    
-    
     private func switchToTabBarController() {
+        print("Switching to tabBar controller.")
         guard let window = UIApplication.shared.windows.first else {
             assertionFailure("Invalid window configuration")
             return
         }
         
-        // Загружаем TabBarController из Storyboard и устанавливаем profile
+        // Загружаем CustomTabBarController из Storyboard и устанавливаем profile
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         if let tabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarViewController") as? CustomTabBarController {
             tabBarController.profile = profile
@@ -128,15 +89,11 @@ final class SplashViewController: UIViewController {
         }
     }
     
-    
-    
     private func handleError(_ error: Error) {
         // Обработка ошибки, например, показываем сообщение пользователю
         print("Ошибка при получении данных профиля: \(error.localizedDescription)")
     }
     
-    
-    //Метод используется вместо сигвея к экрану автризации
     private func showAuthenticationScreen() {
         let authViewController = AuthViewController()
         authViewController.delegate = self
@@ -153,8 +110,7 @@ extension SplashViewController: AuthViewControllerDelegate {
             UIBlockingProgressHUD.show()
             OAuth2Service.shared.fetchOAuthToken1(code: code) { result in
                 switch result {
-                case .success(let token):
-                    print("Token successfully fetched: \(token)")
+                case .success:
                     DispatchQueue.main.async {
                         self.switchToTabBarController()
                     }

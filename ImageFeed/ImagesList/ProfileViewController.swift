@@ -5,11 +5,12 @@ final class ProfileViewController: UIViewController {
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         setupNotificationObserver()
+        
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setupNotificationObserver()
+      
     }
     
     private let profilePhotoView = UIImageView()
@@ -30,17 +31,23 @@ final class ProfileViewController: UIViewController {
         
         setupInitialUI()
         loadProfile()
+        
+        if let avatarURL = ProfileImageService.shared.avatarURL,// 16
+           let url = URL(string: avatarURL) {
+            print("Avatar URL already available: \(avatarURL)")
+                   
+                   // Обновляем аватар без ожидания нового уведомления
+                   updateAvatarImage(with: url)
+        }
     }
-    
     private func setupNotificationObserver() {
-        guard !isObserverAdded else { return }
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(updateAvatar(_:)),
             name: ProfileImageService.didChangeNotification,
             object: nil
         )
-        isObserverAdded = true
+        
         print("Observer added in init")
         
     }
@@ -50,7 +57,24 @@ final class ProfileViewController: UIViewController {
     }
     
     
-    
+    private func updateAvatarImage(with url: URL) {
+        DispatchQueue.main.async {
+            self.profilePhotoView.kf.setImage(with: url,
+                                              placeholder: UIImage(named: "Photo"),
+                                              options: [
+                                                .transition(.fade(0.2)),
+                                                .cacheOriginalImage
+                                              ],
+                                              completionHandler: { result in
+                switch result {
+                case .success:
+                    print("Avatar image loaded successfully")
+                case .failure(let error):
+                    print("Failed to load avatar image: \(error.localizedDescription)")
+                }
+            })
+        }
+    }
     
     @objc private func updateAvatar(_ notification: Notification) {
         print("updateAvatar called.")
@@ -65,7 +89,7 @@ final class ProfileViewController: UIViewController {
         
         DispatchQueue.main.async {
             self.profilePhotoView.kf.setImage(with: avatarURL,
-                                              placeholder: UIImage(named: "photo"),
+                                              placeholder: UIImage(named: "Photo"),
                                               options: [
                                                 .transition(.fade(0.2)), // Анимация появления
                                                 .cacheOriginalImage // Сохранение оригинального изображения в кэше

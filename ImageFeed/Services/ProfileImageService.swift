@@ -34,6 +34,8 @@ final class ProfileImageService {
                     self?.avatarURL = profileImageURL
                     print("Profile image URL fetched: \(profileImageURL)")
                         //Здесь была отправка уведомления
+                    NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self, userInfo: ["URL": profileImageURL])
+                    print("Notification posted")
                     completion(.success(profileImageURL))
                 } else {
                     print("No profile image URL found in response: \(userResult)")
@@ -45,6 +47,8 @@ final class ProfileImageService {
             }
         } .resume()
     }
+    
+    
 }
 
 struct UserResult: Codable {
