@@ -7,7 +7,7 @@ final class SplashViewController: UIViewController {
     private var username: String?
     private var didAuthenticateOnce = false
     private let oauth2TokenStorage = OAuth2TokenStorage()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

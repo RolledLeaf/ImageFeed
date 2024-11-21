@@ -7,9 +7,9 @@ final class ProfileImageService {
     
     private let urlSession: URLSession = .shared
     
-    private(set) var avatarURL: String?  // Свойство для хранения URL изображения профиля
+    private(set) var avatarURL: String?
     
-    private init() {}  // Приватный инициализатор для синглтона
+    private init() {}
     
     func fetchProfileImageURL(username: String, _ completion: @escaping (Result<String, Error>) -> Void) {
         print("Fetching profile image URL for username: \(username)")
@@ -33,7 +33,7 @@ final class ProfileImageService {
                 if let profileImageURL = userResult.profileImage?.small {
                     self?.avatarURL = profileImageURL
                     print("Profile image URL fetched: \(profileImageURL)")
-                        //Здесь была отправка уведомления
+                    //Здесь была отправка уведомления
                     NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self, userInfo: ["URL": profileImageURL])
                     print("Notification posted")
                     completion(.success(profileImageURL))
@@ -47,8 +47,6 @@ final class ProfileImageService {
             }
         } .resume()
     }
-    
-    
 }
 
 struct UserResult: Codable {

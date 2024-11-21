@@ -28,13 +28,11 @@ final class SingleImageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Устанавливаем изображение и выполняем рескейл
         guard let image else { return }
         imageView.image = image
         imageView.frame.size = image.size
         rescaleAndCenterImageInScrollView(image: image)
         
-        // параметры масштабирования для UIScrollView
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
     }

@@ -9,8 +9,6 @@ final class ProfileService {
     private var currentProfileTask: URLSessionTask?
     
     func fetchProfile(completion: @escaping (Result<Profile, Error>) -> Void) {
-        // Проверяем, выполняется ли запрос
-      
         guard let token = OAuth2TokenStorage.shared.token else {
             completion(.failure(ProfileServiceError.noToken))
             return
@@ -50,7 +48,6 @@ final class ProfileService {
                 completion(.failure(error))
             }
         }
-        
         currentProfileTask?.resume()
     }
 }

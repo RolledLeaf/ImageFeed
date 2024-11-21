@@ -3,14 +3,11 @@ import Kingfisher
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
-
     //Входная точка приложения
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         return true
     }
-    
-    
     
     func configureCache() {
         let cache = KingfisherManager.shared.cache
