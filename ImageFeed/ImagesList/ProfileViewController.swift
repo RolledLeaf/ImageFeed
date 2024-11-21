@@ -115,6 +115,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupInitialUI() {
+        view.backgroundColor = UIColor(named: "Background color #1A1B22")
         let uiElements = [profilePhotoView, profileNameLabel, profileIDLabel, profileDescriptionLabel, logoutButton]
         uiElements.forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
