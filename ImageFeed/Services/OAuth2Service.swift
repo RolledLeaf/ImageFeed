@@ -8,7 +8,7 @@ final class OAuth2Service {
     
     private init() {}
     
-    func fetchOAuthToken1(code: String, completion: @escaping (Result<String, Error>) -> Void) {
+    func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
         print("Fetching OAuth token...")
         print("Access Key: \(Constants.accessKey)")
         print("Secret Key: \(Constants.secretKey)")

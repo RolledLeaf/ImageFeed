@@ -108,7 +108,7 @@ extension SplashViewController: AuthViewControllerDelegate {
         vc.dismiss(animated: true) { [weak self] in
             guard let self = self else { return }
             UIBlockingProgressHUD.show()
-            OAuth2Service.shared.fetchOAuthToken1(code: code) { result in
+            OAuth2Service.shared.fetchOAuthToken(code: code) { result in
                 switch result {
                 case .success:
                     DispatchQueue.main.async {
