@@ -4,7 +4,6 @@ final class OAuth2Service {
     static let shared = OAuth2Service()
     
     private var currentAuthTask: URLSessionTask?
-    private var isRequestInProgress = false
     
     private init() {}
     
@@ -20,8 +19,6 @@ final class OAuth2Service {
             currentTask.cancel()
             print("Previous request cancelled.")
         }
-        
-        isRequestInProgress = true
         
         let parameters: [String: String] = [
             "client_id": Constants.accessKey,
@@ -45,8 +42,7 @@ final class OAuth2Service {
         
         currentAuthTask = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<TokenResponse, Error>) in
             guard let self = self else { return }
-            defer { self.isRequestInProgress = false
-                self.currentAuthTask = nil
+            defer {self.currentAuthTask = nil
             }
             
             switch result {
