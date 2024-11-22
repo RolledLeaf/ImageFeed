@@ -189,11 +189,16 @@ final class ProfileViewController: UIViewController {
     }
     
     private func switchToAuthScreen() {
-        guard let window = UIApplication.shared.windows.first else { return }
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first(where: { $0.isKeyWindow }) else {
+            return
+        }
+        
         let splashViewController = SplashViewController()
-        window.rootViewController = splashViewController
+        UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromRight, animations: {
+            window.rootViewController = splashViewController
+        }, completion: nil)
         window.makeKeyAndVisible()
-        UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromRight, animations: nil, completion: nil)
     }
 }
 

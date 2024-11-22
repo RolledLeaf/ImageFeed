@@ -34,7 +34,7 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
             return
         }
         
-        OAuth2Service.shared.fetchOAuthToken1(code: code) { [weak self] result in
+        OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let token):
