@@ -17,6 +17,7 @@ final class ProfileImageService {
         // Формирование URL и проверка на валидность
         guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {
             completion(.failure(ProfileImageServiceError.invalidURL))
+            print("Invalid image URL")
             return
         }
         

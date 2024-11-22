@@ -16,24 +16,7 @@ final class SplashViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         //Сценарий "пользователь уже авторизован"
-        if let token = oauth2TokenStorage.token {
-            if profile == nil {
-                fetchProfileAndAvatar { [weak self] result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success:
-                            self?.switchToTabBarController()
-                        case .failure(let error):
-                            print("Error fetching profile and avatar: \(error.localizedDescription)")
-                            self?.handleError(error)
-                        }
-                    }
-                }
-            }
-        } else {
-            showAuthenticationScreen()
-            print("Token not found, starting authentication.")
-        }
+        checkAuthentication()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -43,6 +26,30 @@ final class SplashViewController: UIViewController {
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
+    }
+    
+    private func checkAuthentication() {
+        if oauth2TokenStorage.token != nil {
+            fetchProfileIfNeeded()
+        } else {
+            showAuthenticationScreen()
+            print("Token not found, starting authentication.")
+        }
+    }
+    
+    private func fetchProfileIfNeeded() {
+        guard profile == nil else { return }
+        fetchProfileAndAvatar { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self?.switchToTabBarController()
+                case .failure(let error):
+                    print("Error fetching profile and avatar: \(error.localizedDescription)")
+                    self?.handleError(error)
+                }
+            }
+        }
     }
     
     private func fetchProfileAndAvatar(completion: @escaping (Result<Profile, Error>) -> Void) {
@@ -70,12 +77,12 @@ final class SplashViewController: UIViewController {
     
     private func switchToTabBarController() {
         print("Switching to tabBar controller.")
-        guard let window = UIApplication.shared.windows.first else {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first(where: { $0.isKeyWindow }) else {
             assertionFailure("Invalid window configuration")
             return
         }
         
-        // Загружаем CustomTabBarController из Storyboard и устанавливаем profile
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         if let tabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarViewController") as? CustomTabBarController {
             tabBarController.profile = profile

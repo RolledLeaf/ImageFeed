@@ -5,16 +5,17 @@ final class ProfileService {
     private init() {}
     
     private let urlSession: URLSession = .shared
-    private var isRequestInProgress = false
     private var currentProfileTask: URLSessionTask?
     
     func fetchProfile(completion: @escaping (Result<Profile, Error>) -> Void) {
         guard let token = OAuth2TokenStorage.shared.token else {
             completion(.failure(ProfileServiceError.noToken))
+            print("Token is nil.")
             return
         }
         guard let url = URL(string: "https://api.unsplash.com/me") else {
             completion(.failure(ProfileServiceError.invalidURL))
+            print("Invalid URL.")
             return
         }
         
@@ -23,10 +24,7 @@ final class ProfileService {
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         print("Making network request with token: \(token)")
         
-        isRequestInProgress = true
-        
         currentProfileTask = urlSession.objectTask(for: request) { [weak self] (result: Result<UserProfile, Error>) in
-            self?.isRequestInProgress = false
             self?.currentProfileTask = nil
             
             switch result {
@@ -46,6 +44,7 @@ final class ProfileService {
                     return
                 }
                 completion(.failure(error))
+                print("Error fetching profile: \(error.localizedDescription).")
             }
         }
         currentProfileTask?.resume()
