@@ -4,26 +4,21 @@ final class OAuth2Service {
     static let shared = OAuth2Service()
     
     private var currentAuthTask: URLSessionTask?
-    private var isRequestInProgress = false
     
     private init() {}
     
-    func fetchOAuthToken1(code: String, completion: @escaping (Result<String, Error>) -> Void) {
+    func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
         print("Fetching OAuth token...")
         print("Access Key: \(Constants.accessKey)")
         print("Secret Key: \(Constants.secretKey)")
         print("Redirect URI: \(Constants.redirectURI)")
         print("Authorization Code: \(code)")
         
-        if isRequestInProgress {
-            if let currentCode = currentAuthTask?.originalRequest?.url?.query?.contains("code=\(code)"), currentCode {
-                currentAuthTask?.cancel()
-            } else {
-                return
-            }
-        }
         
-        isRequestInProgress = true
+        if let currentTask = currentAuthTask {
+            currentTask.cancel()
+            print("Previous request cancelled.")
+        }
         
         let parameters: [String: String] = [
             "client_id": Constants.accessKey,
@@ -34,7 +29,7 @@ final class OAuth2Service {
         ]
         
         guard let url = URL(string: "https://unsplash.com/oauth/token") else {
-            print("Invalid URL") // Логируем ошибку
+            print("Invalid token URL") // Логируем ошибку
             completion(.failure(URLError(.badURL)))
             return
         }
@@ -44,10 +39,11 @@ final class OAuth2Service {
         request.httpBody = parameters.percentEncoded()
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         
-        // Используем objectTask<T>
+        
         currentAuthTask = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<TokenResponse, Error>) in
             guard let self = self else { return }
-            defer { self.isRequestInProgress = false }
+            defer {self.currentAuthTask = nil
+            }
             
             switch result {
             case .success(let tokenResponse):
@@ -61,7 +57,6 @@ final class OAuth2Service {
                 completion(.failure(error))
             }
         }
-        
         currentAuthTask?.resume()
     }
 }
@@ -91,6 +86,7 @@ extension URLSession {
             DispatchQueue.main.async {
                 if let error = error {
                     completion(.failure(error))
+                    
                     return
                 }
                 guard let data = data, let response = response else {

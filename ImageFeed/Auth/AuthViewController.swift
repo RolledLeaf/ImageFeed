@@ -18,6 +18,34 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
         setupConstraints()
     }
     
+    func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
+        navigationController?.popViewController(animated: true)
+        print("User canceled the authorization")
+    }
+    
+    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
+        // сообщаем делегату о получении кода
+        delegate?.authViewController(self, didAuthenticateWithCode: code)
+    }
+    
+    func didReceiveAuthorizationCode(_ code: String) {
+        guard !code.isEmpty else {
+            showAlert(title: "Ошибка авторизации", message: "Не удалось получить код авторизации. Попробуйте ещё раз.")
+            return
+        }
+        
+        OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let token):
+                    print("Получен токен: \(token)")
+                case .failure(let error):
+                    self?.handleAuthError(error)
+                }
+            }
+        }
+    }
+    
     private func setupUI() {
         loginIcon.image = UIImage(named: "AuthIcon")
         loginIcon.contentMode = .scaleAspectFit
@@ -56,29 +84,6 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
         navigationController?.pushViewController(webViewController, animated: true)
     }
     
-   func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        // сообщаем делегату о получении кода
-        delegate?.authViewController(self, didAuthenticateWithCode: code)
-    }
-    
-    func didReceiveAuthorizationCode(_ code: String) {
-        guard !code.isEmpty else {
-            showAlert(title: "Ошибка авторизации", message: "Не удалось получить код авторизации. Попробуйте ещё раз.")
-            return
-        }
-
-        OAuth2Service.shared.fetchOAuthToken1(code: code) { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let token):
-                    print("Получен токен: \(token)")
-                case .failure(let error):
-                    self?.handleAuthError(error)
-                }
-            }
-        }
-    }
-    
     private func handleAuthError(_ error: Error) {
         switch error {
         case AuthError.invalidResponse:
@@ -91,30 +96,25 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
             showAlert(title: "Сетевая ошибка", message: "Проверьте подключение к интернету.")
         case AuthError.unknown:
             showAlert(title: "Неизвестная ошибка", message: "Что-то пошло не так. Попробуйте ещё раз.")
-            default :
+        default :
             return
         }
     }
-      
-      func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
-          navigationController?.popViewController(animated: true)
-          print("User canceled the authorization")
-      }
-      
-      private func showAlert(title: String, message: String) {
-          let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-          let okAction = UIAlertAction(title: "Ок", style: .default)
-          alertController.addAction(okAction)
-          present(alertController, animated: true)
-          let retryAction = UIAlertAction(title: "Повторить", style: .default) { _ in
-          }
-          alertController.addAction(retryAction)
-      }
-  }
+    
+    private func showAlert(title: String, message: String) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "Ок", style: .default)
+        alertController.addAction(okAction)
+        present(alertController, animated: true)
+        let retryAction = UIAlertAction(title: "Повторить", style: .default) { _ in
+        }
+        alertController.addAction(retryAction)
+    }
+}
 
 enum AuthError: Error {
     case invalidResponse
-    case serverError(Int) 
+    case serverError(Int)
     case invalidData
     case networkError
     case unknown
