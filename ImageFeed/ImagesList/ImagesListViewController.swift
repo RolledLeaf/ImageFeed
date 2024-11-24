@@ -2,7 +2,6 @@ import UIKit
 
 final class ImagesListViewController: UIViewController {
     
-    
     @IBOutlet private var tableView: UITableView!
     
     private let showSingleImageSegueIdentifier: String = "ShowSingleImage"
@@ -30,7 +29,6 @@ final class ImagesListViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        //Проверка ID сигвея
         if segue.identifier == showSingleImageSegueIdentifier {
             guard
                 let viewController = segue.destination as? SingleImageViewController,
@@ -48,11 +46,11 @@ final class ImagesListViewController: UIViewController {
 }
 
 extension ImagesListViewController: UITableViewDataSource {
-     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return photosName.count
     }
     
-     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath) as? ImagesListCell else {
             return UITableViewCell()
         }
