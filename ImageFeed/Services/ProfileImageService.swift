@@ -33,8 +33,6 @@ final class ProfileImageService {
                 print("Response received: \(userResult)")
                 if let profileImageURL = userResult.profileImage?.small {
                     self?.avatarURL = profileImageURL
-                    print("Profile image URL fetched: \(profileImageURL)")
-                    //Здесь была отправка уведомления
                     NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self, userInfo: ["URL": profileImageURL])
                     print("Notification posted")
                     completion(.success(profileImageURL))

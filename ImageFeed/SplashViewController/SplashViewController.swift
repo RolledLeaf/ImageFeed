@@ -62,7 +62,6 @@ final class SplashViewController: UIViewController {
                     switch imageResult {
                     case .success(let avatarURL):
                         print("Fetched avatar URL: \(avatarURL)")
-                        //Здесь была отправка уведомления
                         completion(.success(profile))
                     case .failure(let error):
                         print("Failed to fetch avatar URL: \(error.localizedDescription)")
