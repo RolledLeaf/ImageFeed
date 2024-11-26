@@ -6,6 +6,7 @@ final class ImagesListViewController: UIViewController {
     
     private let showSingleImageSegueIdentifier: String = "ShowSingleImage"
     private let photosName: [String] = Array(0..<20).map{"\($0)"}
+    var photos: [Photo] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
