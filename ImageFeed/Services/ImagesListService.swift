@@ -4,6 +4,10 @@ import Foundation
 final class ImagesListService {
     // MARK: - Static Properties
     static let didChangeNotification = Notification.Name("ImagesListServiceDidChange")
+    static let didStartLoadingNotification = Notification.Name("ImagesListServiceDidStartLoading")
+    static let didFinishLoadingNotification = Notification.Name("ImagesListServiceDidFinishLoading")
+    
+    
     
     // MARK: - Private Properties
     private(set) var photos: [Photo] = []
@@ -12,48 +16,79 @@ final class ImagesListService {
     
     // MARK: - Methods
     func fetchPhotosNextPage() {
+        print("Fetching next page of images...")
         guard !isLoading else { return }
         isLoading = true
+        startLoadingNotification()
+        
         
         let nextPage = (lastLoadedPage ?? 0) + 1
         let url = URL(string: "https://api.unsplash.com/photos?page=\(nextPage)&per_page=10")!
         var request = URLRequest(url: url)
-        request.addValue("Bearer YOUR_ACCESS_TOKEN", forHTTPHeaderField: "Authorization")
+        request.addValue("Bearer \(OAuth2TokenStorage.shared.token ?? "")", forHTTPHeaderField: "Authorization")
         
         let task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
             guard let self = self else { return }
             defer { self.isLoading = false }
             
             if let error = error {
-                print("Failed to fetch photos: \(error.localizedDescription)")
+                print("Network error: \(error.localizedDescription)")
                 return
+            }
+            
+            if let httpResponse = response as? HTTPURLResponse {
+                print("HTTP Status Code: \(httpResponse.statusCode)")
             }
             
             guard let data = data,
-                  let httpResponse = response as? HTTPURLResponse,
-                  httpResponse.statusCode == 200 else {
-                print("Invalid response or data.")
+                  let responseString = String(data: data, encoding: .utf8)
+                    
+            else {
+                print("No data received.")
                 return
             }
+            print("Response body: \(responseString)")
             
             do {
                 let photoResults = try JSONDecoder().decode([PhotoResult].self, from: data)
+                print("Fetched \(photoResults.count) photos.")
                 let newPhotos = photoResults.map { Photo(from: $0) }
                 
                 DispatchQueue.main.async {
                     self.photos.append(contentsOf: newPhotos)
                     self.lastLoadedPage = nextPage
                     
-                    NotificationCenter.default.post(
-                        name: ImagesListService.didChangeNotification,
-                        object: self
-                    )
+                    self.stopLoadingNotification()
+                    
+                    self.didChangeNotification()
+                    
                 }
             } catch {
-                print("Failed to decode photos: \(error.localizedDescription)")
+                print("Decoding error: \(error.localizedDescription)")
             }
         }
         task.resume()
+    }
+    
+    private func startLoadingNotification() {
+        NotificationCenter.default.post(
+            name: ImagesListService.didStartLoadingNotification,
+            object: self
+        )
+    }
+    
+    private func stopLoadingNotification() {
+        NotificationCenter.default.post(
+            name: ImagesListService.didFinishLoadingNotification,
+            object: self
+        )
+    }
+    
+    private func didChangeNotification() {
+        NotificationCenter.default.post(
+            name: ImagesListService.didChangeNotification,
+            object: self
+        )
     }
 }
 
