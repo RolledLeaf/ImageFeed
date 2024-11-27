@@ -1,20 +1,13 @@
 import UIKit
 
 final class SingleImageViewController: UIViewController {
-    var image: UIImage? {
-        didSet {
-            guard isViewLoaded, let image else { return }
-            imageView.image = image
-            rescaleAndCenterImageInScrollView(image: image)
-        }
-    }
+    var imageURL: URL?
     
     @IBAction private func didTapBackButton(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
-    
     @IBAction private func didTapShareButton(_ sender: Any) {
-        guard let image = image else {
+        guard let image = imageURL else {
             return
         }
         
@@ -27,20 +20,31 @@ final class SingleImageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        guard let image else { return }
-        imageView.image = image
-        imageView.frame.size = image.size
-        rescaleAndCenterImageInScrollView(image: image)
-        
-        scrollView.minimumZoomScale = 0.1
-        scrollView.maximumZoomScale = 1.25
+        scrollView.delegate = self
+        loadImage()
     }
     
-    // Метод рескейла и центрирования изображения в UIScrollView
+    private func loadImage() {
+        
+        guard let imageURL = imageURL else { return }
+        imageView.kf.indicatorType = .activity
+        imageView.kf.setImage(with: imageURL) { [weak self] result in
+                   switch result {
+                   case .success(let value):
+                       print("Image loaded successfully.")
+                       self?.rescaleAndCenterImageInScrollView(image: value.image)
+                   case .failure(let error):
+                       print("Failed to load image: \(error.localizedDescription)")
+                   }
+               }
+           }
+    
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
-        let minZoomScale = scrollView.minimumZoomScale
-        let maxZoomScale = scrollView.maximumZoomScale
+        let minZoomScale: CGFloat = 1
+        let maxZoomScale: CGFloat = 1.25
+        
+        scrollView.minimumZoomScale = minZoomScale
+        scrollView.maximumZoomScale = maxZoomScale
         view.layoutIfNeeded()
         
         let visibleRectSize = scrollView.bounds.size
@@ -54,7 +58,6 @@ final class SingleImageViewController: UIViewController {
         centerImage()
     }
     
-    // Центрирование изображения в scrollView
     private func centerImage() {
         let visibleRectSize = scrollView.bounds.size
         let newContentSize = scrollView.contentSize
@@ -65,10 +68,11 @@ final class SingleImageViewController: UIViewController {
 }
 
 extension SingleImageViewController: UIScrollViewDelegate {
-    //Метод, определяющий какую именно вью увеличивать
+    
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        return imageView
-    }
+            return imageView
+        }
+    
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
         centerImage()
     }
