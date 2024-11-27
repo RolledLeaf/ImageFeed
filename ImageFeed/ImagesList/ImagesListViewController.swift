@@ -110,12 +110,11 @@ final class ImagesListViewController: UIViewController {
                 let viewController = segue.destination as? SingleImageViewController,
                 let indexPath = sender as? IndexPath
             else {
-                assertionFailure("Invalid segue destination")
+                assertionFailure("Invalid segue destination or sender")
                 return
             }
             let photo = photos[indexPath.row]
-            let image = UIImage(named: photo.thumbImageURL)
-            viewController.image = image
+            viewController.imageURL = URL(string: photo.largeImageURL) // Передаём URL изображения
         } else {
             super.prepare(for: segue, sender: sender)
         }
