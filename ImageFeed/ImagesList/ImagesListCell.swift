@@ -7,6 +7,13 @@ final class ImagesListCell: UITableViewCell {
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var cellImageView: UIImageView!
     
+    // Закрытие для обработки нажатия на кнопку лайк
+    var likeButtonTappedAction: (() -> Void)?
+    
+    @IBAction func likeButtonTapped(_ sender: UIButton) {
+        likeButtonTappedAction?()  // Вызываем закрытие при нажатии
+    }
+    
     func configurationButton(isActive: Bool) {
         let buttonImageName = isActive ? "Active" : "No Active"
         likeButton.setImage(UIImage(named: buttonImageName), for: .normal)
@@ -17,4 +24,3 @@ final class ImagesListCell: UITableViewCell {
         cellImageView.layer.masksToBounds = true
     }
 }
-
