@@ -13,6 +13,8 @@ final class ImagesListService {
     private(set) var photos: [Photo] = []
     private var lastLoadedPage: Int?
     private var isLoading = false
+    private let token = OAuth2TokenStorage.shared.token
+    private let baseURL = "https://api.unsplash.com"
     
     // MARK: - Methods
     func fetchPhotosNextPage() {
@@ -23,7 +25,7 @@ final class ImagesListService {
         
         
         let nextPage = (lastLoadedPage ?? 0) + 1
-        let url = URL(string: "https://api.unsplash.com/photos?page=\(nextPage)&per_page=10")!
+        let url = URL(string: "\(baseURL)/photos?page=\(nextPage)&per_page=10")!
         var request = URLRequest(url: url)
         request.addValue("Bearer \(OAuth2TokenStorage.shared.token ?? "")", forHTTPHeaderField: "Authorization")
         
@@ -70,6 +72,49 @@ final class ImagesListService {
         task.resume()
     }
     
+    //Свежак
+    func updatePhotoLikeStatus(photoId: String, like: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+        print("Attempting to update photo like status for photoId: \(photoId), like: \(like)")
+        
+        let action = like ? "like" : "like"
+        guard let url = URL(string: "\(baseURL)/photos/\(photoId)/\(action)") else {
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = like ? "POST" : "DELETE"
+        request.setValue("Bearer \(OAuth2TokenStorage.shared.token ?? "")", forHTTPHeaderField: "Authorization")
+        print("Request configured with method: \(request.httpMethod ?? "") and headers: \(request.allHTTPHeaderFields ?? [:])")
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("URLSession error: \(error.localizedDescription)")
+                completion(.failure(error))
+                return
+            }
+            
+            if let httpResponse = response as? HTTPURLResponse {
+                print("Received response with status code: \(httpResponse.statusCode)")
+                if (200...299).contains(httpResponse.statusCode) {
+                    print("Like/unlike operation succeeded. Response data: \(data?.count ?? 0) bytes")
+                    completion(.success(()))
+                } else {
+                    print("Server error with status code: \(httpResponse.statusCode)")
+                    completion(.failure(NSError(domain: "", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "Server error"])))
+                }
+            } else {
+                print("Invalid response format")
+                completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])))
+            }
+        }
+        
+        task.resume()
+    }
+    
+    
+   
+    
     private func startLoadingNotification() {
         NotificationCenter.default.post(
             name: ImagesListService.didStartLoadingNotification,
@@ -92,16 +137,16 @@ final class ImagesListService {
     }
 }
 
-
-struct Photo {
+struct Photo: Decodable {
     let id: String
     let size: CGSize
     let createdAt: Date?
     let welcomeDescription: String?
     let thumbImageURL: String
     let largeImageURL: String
-    let isLiked: Bool
+    var isLiked: Bool
 }
+
 
 struct PhotoResult: Decodable {
     let id: String
@@ -134,5 +179,13 @@ extension Photo {
         self.thumbImageURL = result.urls.thumb
         self.largeImageURL = result.urls.full
         self.isLiked = result.likedByUser
+    }
+}
+
+extension Array {
+    func withReplaced(itemAt index: Int, newValue: Element) -> [Element] {
+        var copy = self
+        copy[index] = newValue
+        return copy
     }
 }
