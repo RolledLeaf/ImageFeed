@@ -11,6 +11,8 @@ final class ImagesListViewController: UIViewController {
     private let imagesListService = ImagesListService()
     private var photos: [Photo] = []
     
+    var isLikeActionAllowed = true
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         subscribeToStartLoadingNotification()
@@ -21,30 +23,21 @@ final class ImagesListViewController: UIViewController {
     }
     
     func likeButtonTapped(photoId: String, like: Bool, at indexPath: IndexPath) {
-        guard photos.indices.contains(indexPath.row) else {
-            print("Invalid indexPath")
-            return
-        }
-
-        // Обновляем UI сразу для улучшения пользовательского опыта
-        photos[indexPath.row].isLiked = like
-        tableView.reloadRows(at: [indexPath], with: .automatic)
-
-        // Обновляем статус лайка на сервере
-        imagesListService.updatePhotoLikeStatus(photoId: photoId, like: like) {
-            [weak self] result in
-            guard let self = self else { return }
-
-            switch result {
-            case .success:
-                print("Successfully updated like status.")
-            case .failure(let error):
-                print("Failed to update like status: \(error.localizedDescription)")
-                
-                // В случае ошибки откатываем изменения в UI
-                DispatchQueue.main.async {
-                    self.photos[indexPath.row].isLiked = !like
+        guard isLikeActionAllowed else { return }
+        isLikeActionAllowed = false
+        
+        imagesListService.updatePhotoLikeStatus(photoId: photoId, like: like) { result in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.isLikeActionAllowed = true
+            }
+            
+            DispatchQueue.main.async {
+                switch result {
+                case .success():
+                    self.photos[indexPath.row].isLiked = like
                     self.tableView.reloadRows(at: [indexPath], with: .automatic)
+                case .failure(let error):
+                    print("Failed to update like status: \(error.localizedDescription)")
                 }
             }
         }
@@ -130,10 +123,8 @@ final class ImagesListViewController: UIViewController {
             dateFormatter.dateFormat = "dd.MM.yyyy"
             cell.dateLabel.text = dateFormatter.string(from: photo.createdAt ?? Date())
             
-            // Передаем информацию о лайке в ячейку
             cell.configurationButton(isActive: photo.isLiked)
             
-            // Обработчик нажатия на кнопку лайк
             cell.likeButtonTappedAction = { [weak self] in
                 guard let self = self else { return }
                 let likeStatus = !photo.isLiked

@@ -1,4 +1,5 @@
 import UIKit
+import ProgressHUD
 
 final class SingleImageViewController: UIViewController {
     var imageURL: URL?
@@ -25,15 +26,17 @@ final class SingleImageViewController: UIViewController {
     }
     
     private func loadImage() {
-        
         guard let imageURL = imageURL else { return }
+        ProgressHUD.animate()
         imageView.kf.indicatorType = .activity
         imageView.kf.setImage(with: imageURL) { [weak self] result in
                    switch result {
                    case .success(let value):
                        print("Image loaded successfully.")
+                       ProgressHUD.dismiss()
                        self?.rescaleAndCenterImageInScrollView(image: value.image)
                    case .failure(let error):
+                       ProgressHUD.dismiss()
                        print("Failed to load image: \(error.localizedDescription)")
                    }
                }
