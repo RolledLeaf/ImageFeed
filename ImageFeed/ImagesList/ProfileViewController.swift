@@ -183,22 +183,7 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc func logoutButtonTapped() {
-        oauth2TokenStorage.clearToken()
-        oauth2TokenStorage.clearCookies()
-        switchToAuthScreen()
-    }
-    
-    private func switchToAuthScreen() {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = windowScene.windows.first(where: { $0.isKeyWindow }) else {
-            return
-        }
-        
-        let splashViewController = SplashViewController()
-        UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromRight, animations: {
-            window.rootViewController = splashViewController
-        }, completion: nil)
-        window.makeKeyAndVisible()
+        ProfileLogoutService.shared.logout()
     }
 }
 
