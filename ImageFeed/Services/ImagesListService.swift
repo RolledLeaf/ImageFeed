@@ -48,8 +48,8 @@ final class ImagesListService {
             else {
                 print("No data received.")
                 return
-            }
-            print("Response body: \(responseString)")
+            } //временно убрал полный ответ \(responseString)
+            print("Response body: temporary shortened")
             
             do {
                 let photoResults = try JSONDecoder().decode([PhotoResult].self, from: data)

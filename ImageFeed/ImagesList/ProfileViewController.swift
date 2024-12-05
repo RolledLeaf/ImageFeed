@@ -22,6 +22,10 @@ final class ProfileViewController: UIViewController {
     private let profileService = ProfileService.shared
     private let profileImageService = ProfileImageService.shared
     private var profileImageServiceObserver: NSObjectProtocol?
+    private let avatarGradientLayer = CAGradientLayer()
+    private let nameGradientLayer = CAGradientLayer()
+    private let idGradientLayer = CAGradientLayer()
+    private let descriptionGradientLayer = CAGradientLayer()
     var profile: Profile?
     private var isObserverAdded = false
     
@@ -29,6 +33,7 @@ final class ProfileViewController: UIViewController {
         super.viewDidLoad()
         
         setupInitialUI()
+        addGradientAnimationToLabels()
         loadProfile()
         
         if let avatarURL = ProfileImageService.shared.avatarURL,// 16
@@ -54,10 +59,95 @@ final class ProfileViewController: UIViewController {
     }
     
     
+    private func addAvatarGradientAnimation() {
+        print("avatar gradient animation started")
+        // Настройка градиента
+        avatarGradientLayer.colors = [
+            UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1).cgColor,
+            UIColor(red: 0.531, green: 0.533, blue: 0.553, alpha: 1).cgColor,
+            UIColor(red: 0.431, green: 0.433, blue: 0.453, alpha: 1).cgColor
+        ]
+        avatarGradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
+        avatarGradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
+        avatarGradientLayer.frame = profilePhotoView.bounds
+        avatarGradientLayer.cornerRadius = 35
+        avatarGradientLayer.masksToBounds = true
+
+        // Добавляем слой к profilePhotoView
+        profilePhotoView.layer.addSublayer(avatarGradientLayer)
+
+        // Настройка анимации
+        let animation = CABasicAnimation(keyPath: "locations")
+        animation.duration = 0.1
+        animation.fromValue = [0, 0.1, 0.3]
+        animation.toValue = [0, 0.8, 1]
+        animation.repeatCount = .infinity
+
+        avatarGradientLayer.add(animation, forKey: "locationsChange")
+    }
+
+    private func removeAvatarGradientAnimation() {
+        print("avatar gradient animation stopped")
+        avatarGradientLayer.removeAllAnimations()
+        avatarGradientLayer.removeFromSuperlayer()
+    }
+    
+    private func configureGradientLayer(_ gradientLayer: CAGradientLayer, for view: UIView) {
+        gradientLayer.colors = [
+            UIColor.white.withAlphaComponent(1).cgColor,
+            UIColor.gray.withAlphaComponent(1).cgColor,
+            UIColor.white.withAlphaComponent(1).cgColor
+        ]
+        gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
+        gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
+        gradientLayer.cornerRadius = view.bounds.height / 2
+        view.layer.addSublayer(gradientLayer)
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        // Обновление размеров градиентных слоёв
+        nameGradientLayer.frame = profileNameLabel.bounds
+        idGradientLayer.frame = profileIDLabel.bounds
+        descriptionGradientLayer.frame = profileDescriptionLabel.bounds
+        avatarGradientLayer.frame = profilePhotoView.bounds
+    }
+    
+    private func startGradientAnimation(for layer: CAGradientLayer) {
+        let animation = CABasicAnimation(keyPath: "locations")
+        animation.fromValue = 1.0
+        animation.toValue = 0.5
+        animation.duration = 0.1
+        animation.repeatCount = .infinity
+        layer.add(animation, forKey: "loadingAnimation")
+        print("labels gradient animation  started")
+    }
+    
+    private func addGradientAnimationToLabels() {
+        
+        configureGradientLayer(nameGradientLayer, for: profileNameLabel)
+        configureGradientLayer(idGradientLayer, for: profileIDLabel)
+        configureGradientLayer(descriptionGradientLayer, for: profileDescriptionLabel)
+        
+        startGradientAnimation(for: nameGradientLayer)
+        startGradientAnimation(for: idGradientLayer)
+        startGradientAnimation(for: descriptionGradientLayer)
+    }
+    
+    private func stopGradientAnimation(for layer: CAGradientLayer) {
+        print("labels gradient animation stopped")
+        layer.removeAllAnimations()
+        layer.removeFromSuperlayer()
+    }
+    
     private func updateAvatarImage(with url: URL) {
+        print("update Avatar Image called.")
         DispatchQueue.main.async {
+            self.addAvatarGradientAnimation()
+            
             self.profilePhotoView.kf.setImage(with: url,
-                                              placeholder: UIImage(named: "Photo"),
+                                              
                                               options: [
                                                 .transition(.fade(0.2)),
                                                 .cacheOriginalImage
@@ -66,6 +156,7 @@ final class ProfileViewController: UIViewController {
                 switch result {
                 case .success:
                     print("Avatar image loaded successfully")
+                    self.removeAvatarGradientAnimation()
                 case .failure(let error):
                     print("Failed to load avatar image: \(error.localizedDescription)")
                 }
@@ -85,8 +176,9 @@ final class ProfileViewController: UIViewController {
         print("Received avatar URL in notification: \(avatarURLString)")
         
         DispatchQueue.main.async {
+            self.addAvatarGradientAnimation()
             self.profilePhotoView.kf.setImage(with: avatarURL,
-                                              placeholder: UIImage(named: "Photo"),
+                                              
                                               options: [
                                                 .transition(.fade(0.2)),
                                                 .cacheOriginalImage
@@ -95,6 +187,8 @@ final class ProfileViewController: UIViewController {
                 switch result {
                 case .success:
                     print("Avatar image loaded successfully")
+                    self.removeAvatarGradientAnimation()
+                    print("Gradient animation removed")
                 case .failure(let error):
                     print("Failed to load avatar image: \(error.localizedDescription)")
                 }
@@ -117,9 +211,15 @@ final class ProfileViewController: UIViewController {
     }
     
     private func updateUI(with profile: Profile) {
+        
         profileNameLabel.text = profile.name
         profileIDLabel.text = "@\(profile.username)"
         profileDescriptionLabel.text = profile.bio
+        
+        stopGradientAnimation(for: nameGradientLayer)
+           stopGradientAnimation(for: idGradientLayer)
+           stopGradientAnimation(for: descriptionGradientLayer)
+        
         
     }
     
@@ -137,21 +237,26 @@ final class ProfileViewController: UIViewController {
     
     private func setupInitialUI() {
         view.backgroundColor = UIColor(named: "Background color #1A1B22")
+        
+        profilePhotoView.clipsToBounds = true
+           profilePhotoView.layer.cornerRadius = 35
+           profilePhotoView.contentMode = .scaleAspectFill
+        
         let uiElements = [profilePhotoView, profileNameLabel, profileIDLabel, profileDescriptionLabel, logoutButton]
         uiElements.forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
-        
-        configureLabel(profileNameLabel, text: profile?.name ?? "", fontSize: 23, weight: .bold, color: .nameColor)
-        configureLabel(profileIDLabel, text: profile?.username ?? "", fontSize: 13, weight: .regular, color: .idColor)
-        configureLabel(profileDescriptionLabel, text: profile?.bio ?? "", fontSize: 13, weight: .regular, color: .nameColor)
+
+        configureLabel(profileNameLabel, text:  "User name", fontSize: 23, weight: .bold, color: .nameColor)
+        configureLabel(profileIDLabel, text: "User ID", fontSize: 13, weight: .regular, color: .idColor)
+        configureLabel(profileDescriptionLabel, text: "Bio", fontSize: 13, weight: .regular, color: .nameColor)
         logoutButton.setImage(UIImage(systemName: "ipad.and.arrow.forward"), for: .normal)
         logoutButton.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
         logoutButton.tintColor = .logoutRed
         logoutButton.layer.cornerRadius = 0
-        
         setupConstraints()
+        print("Initial UI setup complete")
     }
     
     private func setupConstraints() {
