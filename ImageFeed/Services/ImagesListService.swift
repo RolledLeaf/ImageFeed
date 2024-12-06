@@ -2,21 +2,18 @@ import UIKit
 import Foundation
 
 final class ImagesListService {
-    // MARK: - Static Properties
+
     static let didChangeNotification = Notification.Name("ImagesListServiceDidChange")
     static let didStartLoadingNotification = Notification.Name("ImagesListServiceDidStartLoading")
     static let didFinishLoadingNotification = Notification.Name("ImagesListServiceDidFinishLoading")
     
-    
-    
-    // MARK: - Private Properties
     private(set) var photos: [Photo] = []
     private var lastLoadedPage: Int?
     private var isLoading = false
     private let token = OAuth2TokenStorage.shared.token
     private let baseURL = "https://api.unsplash.com"
     
-    // MARK: - Methods
+
     func fetchPhotosNextPage() {
         print("Fetching next page of images...")
         guard !isLoading else { return }
@@ -48,8 +45,8 @@ final class ImagesListService {
             else {
                 print("No data received.")
                 return
-            }
-            print("Response body: \(responseString)")
+            } //временно убрал полный ответ \(responseString)
+            print("Response body: temporary shortened")
             
             do {
                 let photoResults = try JSONDecoder().decode([PhotoResult].self, from: data)
@@ -71,8 +68,7 @@ final class ImagesListService {
         }
         task.resume()
     }
-    
-    //Свежак
+
     func updatePhotoLikeStatus(photoId: String, like: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
         print("Attempting to update photo like status for photoId: \(photoId), like: \(like)")
         
@@ -111,10 +107,7 @@ final class ImagesListService {
         
         task.resume()
     }
-    
-    
-   
-    
+ 
     private func startLoadingNotification() {
         NotificationCenter.default.post(
             name: ImagesListService.didStartLoadingNotification,
@@ -145,6 +138,7 @@ struct Photo: Decodable {
     let thumbImageURL: String
     let largeImageURL: String
     var isLiked: Bool
+    var isLoading: Bool = true
 }
 
 

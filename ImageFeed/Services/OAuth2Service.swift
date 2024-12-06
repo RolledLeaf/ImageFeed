@@ -61,7 +61,6 @@ final class OAuth2Service {
     }
 }
 
-// Расширение для кодирования параметров
 extension Dictionary {
     func percentEncoded() -> Data? {
         return map { key, value in
@@ -72,7 +71,6 @@ extension Dictionary {
     }
 }
 
-// Структура для декодирования ответа
 struct TokenResponse: Codable {
     let accessToken: String
     

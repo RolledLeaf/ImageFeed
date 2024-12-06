@@ -30,17 +30,17 @@ final class SingleImageViewController: UIViewController {
         ProgressHUD.animate()
         imageView.kf.indicatorType = .activity
         imageView.kf.setImage(with: imageURL) { [weak self] result in
-                   switch result {
-                   case .success(let value):
-                       print("Image loaded successfully.")
-                       ProgressHUD.dismiss()
-                       self?.rescaleAndCenterImageInScrollView(image: value.image)
-                   case .failure(let error):
-                       ProgressHUD.dismiss()
-                       print("Failed to load image: \(error.localizedDescription)")
-                   }
-               }
-           }
+            switch result {
+            case .success(let value):
+                print("Image loaded successfully.")
+                ProgressHUD.dismiss()
+                self?.rescaleAndCenterImageInScrollView(image: value.image)
+            case .failure(let error):
+                ProgressHUD.dismiss()
+                print("Failed to load image: \(error.localizedDescription)")
+            }
+        }
+    }
     
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
         let minZoomScale: CGFloat = 1
@@ -73,8 +73,8 @@ final class SingleImageViewController: UIViewController {
 extension SingleImageViewController: UIScrollViewDelegate {
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-            return imageView
-        }
+        return imageView
+    }
     
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
         centerImage()

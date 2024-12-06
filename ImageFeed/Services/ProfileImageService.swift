@@ -6,7 +6,6 @@ final class ProfileImageService {
     static let didChangeNotification = Notification.Name("ProfileImageDidChange")
     
     private let urlSession: URLSession = .shared
-    
     private(set) var avatarURL: String?
     
     private init() {}
