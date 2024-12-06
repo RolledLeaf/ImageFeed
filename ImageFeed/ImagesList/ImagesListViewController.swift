@@ -6,7 +6,6 @@ final class ImagesListViewController: UIViewController {
     
     @IBOutlet private var tableView: UITableView!
     
-  
     private let showSingleImageSegueIdentifier = "ShowSingleImage"
     private let imagesListService = ImagesListService()
     private var photos: [Photo] = []
@@ -50,12 +49,12 @@ final class ImagesListViewController: UIViewController {
     }
     
     private func showLoading(_ isLoading: Bool) {
-            if isLoading {
-                ProgressHUD.animate()
-            } else {
-                ProgressHUD.dismiss()
-            }
+        if isLoading {
+            ProgressHUD.animate()
+        } else {
+            ProgressHUD.dismiss()
         }
+    }
     
     private func subscribeToNotifications() {
         NotificationCenter.default.addObserver(
@@ -68,29 +67,29 @@ final class ImagesListViewController: UIViewController {
     
     private func subscribeToFinishLoadingNotification() {
         NotificationCenter.default.addObserver(
-                    self,
-                    selector: #selector(handleFinishLoading),
-                    name: ImagesListService.didFinishLoadingNotification,
-                    object: nil
-                )
+            self,
+            selector: #selector(handleFinishLoading),
+            name: ImagesListService.didFinishLoadingNotification,
+            object: nil
+        )
     }
     
     private func subscribeToStartLoadingNotification() {
         NotificationCenter.default.addObserver(
-                    self,
-                    selector: #selector(handleStartLoading),
-                    name: ImagesListService.didStartLoadingNotification,
-                    object: nil
-                )
+            self,
+            selector: #selector(handleStartLoading),
+            name: ImagesListService.didStartLoadingNotification,
+            object: nil
+        )
     }
     
     @objc private func handleStartLoading() {
-           showLoading(true)
-       }
-       
-       @objc private func handleFinishLoading() {
-           showLoading(false)
-       }
+        showLoading(true)
+    }
+    
+    @objc private func handleFinishLoading() {
+        showLoading(false)
+    }
     
     @objc private func onImagesListServiceDidChange(_ notification: Notification) {
         let newPhotos = imagesListService.photos
@@ -107,34 +106,41 @@ final class ImagesListViewController: UIViewController {
     }
     
     func configCell(for cell: ImagesListCell, with photo: Photo) {
-            let placeholder = UIImage(named: "downloadingImageMock")
-            let url = URL(string: photo.thumbImageURL)
-            
-            cell.cellImageView.kf.indicatorType = .activity
-            cell.cellImageView.kf.setImage(with: url, placeholder: placeholder) { [weak tableView] result in
-                if let indexPath = tableView?.indexPath(for: cell),
-                   let visiblePaths = tableView?.indexPathsForVisibleRows,
-                   visiblePaths.contains(indexPath) {
-                    tableView?.reloadRows(at: [indexPath], with: .automatic)
-                }
+        let placeholder = UIImage(named: "downloadingImageMock")
+        let url = URL(string: photo.thumbImageURL)
+        
+        cell.cellImageView.kf.indicatorType = .activity
+        cell.cellImageView.kf.setImage(with: url, placeholder: placeholder) { [weak tableView] result in
+            if let indexPath = tableView?.indexPath(for: cell),
+               let visiblePaths = tableView?.indexPathsForVisibleRows,
+               visiblePaths.contains(indexPath) {
+                self.photos[indexPath.row].isLoading = false
+                tableView?.reloadRows(at: [indexPath], with: .automatic)
             }
-            
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "dd.MM.yyyy"
-            cell.dateLabel.text = dateFormatter.string(from: photo.createdAt ?? Date())
-            
-            cell.configurationButton(isActive: photo.isLiked)
-            
-            cell.likeButtonTappedAction = { [weak self] in
-                guard let self = self else { return }
-                let likeStatus = !photo.isLiked
-                if let indexPath = tableView?.indexPath(for: cell) {
-                    self.likeButtonTapped(photoId: photo.id, like: likeStatus, at: indexPath)
-                }
-            }
-            
-            cell.roundCorners()
         }
+        
+        if photo.isLoading {
+            cell.startGradientAnimation()
+        } else {
+            cell.stopGradientAnimation()
+        }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yyyy"
+        cell.dateLabel.text = dateFormatter.string(from: photo.createdAt ?? Date())
+        
+        cell.configurationButton(isActive: photo.isLiked)
+        
+        cell.likeButtonTappedAction = { [weak self] in
+            guard let self = self else { return }
+            let likeStatus = !photo.isLiked
+            if let indexPath = tableView?.indexPath(for: cell) {
+                self.likeButtonTapped(photoId: photo.id, like: likeStatus, at: indexPath)
+            }
+        }
+        
+        cell.roundCorners()
+    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == showSingleImageSegueIdentifier {
@@ -146,7 +152,7 @@ final class ImagesListViewController: UIViewController {
                 return
             }
             let photo = photos[indexPath.row]
-            viewController.imageURL = URL(string: photo.largeImageURL) // Передаём URL изображения
+            viewController.imageURL = URL(string: photo.largeImageURL)
         } else {
             super.prepare(for: segue, sender: sender)
         }
@@ -168,9 +174,7 @@ extension ImagesListViewController: UITableViewDataSource {
         
         let photo = photos[indexPath.row]
         configCell(for: cell, with: photo)
-
-
-               return cell
+        return cell
     }
 }
 

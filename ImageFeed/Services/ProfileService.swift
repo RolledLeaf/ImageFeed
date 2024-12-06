@@ -66,8 +66,8 @@ struct UserProfile: Decodable {
 }
 
 struct Profile {
-    let username: String      // Логин пользователя
-    let name: String          // Полное имя пользователя
-    let loginName: String     // Логин со знаком @
-    let bio: String?          // Описание профиля
+    let username: String
+    let name: String
+    let loginName: String     
+    let bio: String?
 }
