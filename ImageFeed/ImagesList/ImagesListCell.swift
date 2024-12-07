@@ -13,9 +13,9 @@ final class ImagesListCell: UITableViewCell {
     
     private func setupGradientLayer() {
         gradientLayer.colors = [
-            UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1).cgColor,
-            UIColor(red: 0.531, green: 0.533, blue: 0.553, alpha: 1).cgColor,
-            UIColor(red: 0.431, green: 0.433, blue: 0.453, alpha: 1).cgColor
+            UIColor(named: "GradientGreyColor1")?.cgColor ?? UIColor.systemGray.cgColor,
+            UIColor(named: "GradientGreyColor2")?.cgColor ?? UIColor.systemGray.cgColor,
+            UIColor(named: "GradientGreyColor3")?.cgColor ?? UIColor.systemGray.cgColor
         ]
         gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
         gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)

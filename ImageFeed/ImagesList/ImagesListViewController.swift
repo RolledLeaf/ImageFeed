@@ -107,7 +107,7 @@ final class ImagesListViewController: UIViewController {
     
     func configCell(for cell: ImagesListCell, with photo: Photo) {
         let placeholder = UIImage(named: "downloadingImageMock")
-        let url = URL(string: photo.thumbImageURL)
+        let url = photo.thumbImageURL
         
         cell.cellImageView.kf.indicatorType = .activity
         cell.cellImageView.kf.setImage(with: url, placeholder: placeholder) { [weak tableView] result in
@@ -125,9 +125,7 @@ final class ImagesListViewController: UIViewController {
             cell.stopGradientAnimation()
         }
         
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yyyy"
-        cell.dateLabel.text = dateFormatter.string(from: photo.createdAt ?? Date())
+        cell.dateLabel.text = ISO8601DateFormatter.displayDateFormatter.string(from: photo.createdAt ?? Date())
         
         cell.configurationButton(isActive: photo.isLiked)
         
@@ -152,7 +150,7 @@ final class ImagesListViewController: UIViewController {
                 return
             }
             let photo = photos[indexPath.row]
-            viewController.imageURL = URL(string: photo.largeImageURL)
+            viewController.imageURL = photo.largeImageURL
         } else {
             super.prepare(for: segue, sender: sender)
         }

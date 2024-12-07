@@ -22,7 +22,10 @@ final class ImagesListService {
         
         
         let nextPage = (lastLoadedPage ?? 0) + 1
-        let url = URL(string: "\(baseURL)/photos?page=\(nextPage)&per_page=10")!
+        guard let url = URL(string: "\(baseURL)/photos?page=\(nextPage)&per_page=10") else {
+            print("Invalid URL")
+            return
+            }
         var request = URLRequest(url: url)
         request.addValue("Bearer \(OAuth2TokenStorage.shared.token ?? "")", forHTTPHeaderField: "Authorization")
         
@@ -135,8 +138,8 @@ struct Photo: Decodable {
     let size: CGSize
     let createdAt: Date?
     let welcomeDescription: String?
-    let thumbImageURL: String
-    let largeImageURL: String
+    let thumbImageURL: URL
+    let largeImageURL: URL
     var isLiked: Bool
     var isLoading: Bool = true
 }
@@ -159,8 +162,8 @@ struct PhotoResult: Decodable {
 }
 
 struct UrlsResult: Decodable {
-    let thumb: String
-    let full: String
+    let thumb: URL
+    let full: URL
 }
 
 // Преобразование из PhotoResult в Photo
@@ -182,4 +185,12 @@ extension Array {
         copy[index] = newValue
         return copy
     }
+}
+
+extension ISO8601DateFormatter {
+    static let displayDateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "dd.MM.yyyy"
+            return formatter
+        }()
 }

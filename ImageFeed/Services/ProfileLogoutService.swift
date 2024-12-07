@@ -18,7 +18,9 @@ final class ProfileLogoutService {
         
         let yesAction = UIAlertAction(title: "Да", style: .destructive) { _ in
             print("Logging out...")
-            self.clearAllCookies()
+            self.clearAllCookies{
+                print("Cookies cleared")
+            }
             self.clearToken()
             self.switchToAuthScreen()
         }
@@ -41,19 +43,18 @@ final class ProfileLogoutService {
         print("Token was cleared.")
     }
     
-    func clearAllCookies() {
-        let cookieStore = HTTPCookieStorage.shared
-        cookieStore.cookies?.forEach { cookie in
-            cookieStore.deleteCookie(cookie)
-        }
+    func clearAllCookies(completion: @escaping () -> Void) {
+        HTTPCookieStorage.shared.removeCookies(since: .distantPast)
         print("HTTPCookieStorage cookies cleared.")
         
-        let webCookieStore = WKWebsiteDataStore.default().httpCookieStore
-        webCookieStore.getAllCookies { cookies in
-            for cookie in cookies {
-                webCookieStore.delete(cookie)
+        let webDataStore = WKWebsiteDataStore.default()
+        webDataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
+            records.forEach { record in
+                webDataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), for: [record]) {
+                    print("Removed data for \(record.displayName)")
+                }
             }
-            print("WKWebView cookies cleared.")
+            completion()
         }
     }
     

@@ -63,9 +63,9 @@ final class ProfileViewController: UIViewController {
         print("avatar gradient animation started")
         // Настройка градиента
         avatarGradientLayer.colors = [
-            UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1).cgColor,
-            UIColor(red: 0.531, green: 0.533, blue: 0.553, alpha: 1).cgColor,
-            UIColor(red: 0.431, green: 0.433, blue: 0.453, alpha: 1).cgColor
+            UIColor(named: "GradientGreyColor1")?.cgColor ?? UIColor.systemGray.cgColor,
+            UIColor(named: "GradientGreyColor2")?.cgColor ?? UIColor.systemGray.cgColor,
+            UIColor(named: "GradientGreyColor3")?.cgColor ?? UIColor.systemGray.cgColor
         ]
         avatarGradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
         avatarGradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
@@ -100,9 +100,9 @@ final class ProfileViewController: UIViewController {
     
     private func configureGradientLayer(_ gradientLayer: CAGradientLayer, for view: UIView) {
         gradientLayer.colors = [
-            UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1).cgColor,
-            UIColor(red: 0.531, green: 0.533, blue: 0.553, alpha: 1).cgColor,
-            UIColor(red: 0.431, green: 0.433, blue: 0.453, alpha: 1).cgColor
+            UIColor(named: "GradientGreyColor1")?.cgColor ?? UIColor.systemGray.cgColor,
+            UIColor(named: "GradientGreyColor2")?.cgColor ?? UIColor.systemGray.cgColor,
+            UIColor(named: "GradientGreyColor3")?.cgColor ?? UIColor.systemGray.cgColor
         ]
         let gradientPadding: CGFloat = 8
         
