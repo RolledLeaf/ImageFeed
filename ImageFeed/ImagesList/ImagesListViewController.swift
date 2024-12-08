@@ -95,11 +95,20 @@ final class ImagesListViewController: UIViewController {
         let newPhotos = imagesListService.photos
         let oldCount = photos.count
         let newCount = newPhotos.count
-        photos = newPhotos
-        
+
+        // Проверяем, если новые фотографии добавлены
         guard newCount > oldCount else { return }
-        
+
+        // Получаем только новые фотографии
+        let newPhotosToAdd = Array(newPhotos[oldCount..<newCount])
+
+        // Обновляем массив photos
+        photos.append(contentsOf: newPhotosToAdd)
+
+        // Создаем индексы для новых строк
         let indexPathsToAdd = (oldCount..<newCount).map { IndexPath(row: $0, section: 0) }
+
+        // Выполняем вставку строк в таблицу
         tableView.performBatchUpdates {
             tableView.insertRows(at: indexPathsToAdd, with: .automatic)
         }
