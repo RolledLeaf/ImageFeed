@@ -2,7 +2,7 @@ import UIKit
 import Foundation
 
 final class ImagesListService {
-
+    
     static let didChangeNotification = Notification.Name("ImagesListServiceDidChange")
     static let didStartLoadingNotification = Notification.Name("ImagesListServiceDidStartLoading")
     static let didFinishLoadingNotification = Notification.Name("ImagesListServiceDidFinishLoading")
@@ -13,7 +13,7 @@ final class ImagesListService {
     private let token = OAuth2TokenStorage.shared.token
     private let baseURL = "https://api.unsplash.com"
     
-
+    
     func fetchPhotosNextPage() {
         print("Fetching next page of images...")
         guard !isLoading else { return }
@@ -25,7 +25,7 @@ final class ImagesListService {
         guard let url = URL(string: "\(baseURL)/photos?page=\(nextPage)&per_page=10") else {
             print("Invalid URL")
             return
-            }
+        }
         var request = URLRequest(url: url)
         request.addValue("Bearer \(OAuth2TokenStorage.shared.token ?? "")", forHTTPHeaderField: "Authorization")
         
@@ -71,7 +71,7 @@ final class ImagesListService {
         }
         task.resume()
     }
-
+    
     func updatePhotoLikeStatus(photoId: String, like: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
         print("Attempting to update photo like status for photoId: \(photoId), like: \(like)")
         
@@ -110,7 +110,7 @@ final class ImagesListService {
         
         task.resume()
     }
- 
+    
     private func startLoadingNotification() {
         NotificationCenter.default.post(
             name: ImagesListService.didStartLoadingNotification,
@@ -166,7 +166,6 @@ struct UrlsResult: Decodable {
     let full: URL
 }
 
-// Преобразование из PhotoResult в Photo
 extension Photo {
     init(from result: PhotoResult) {
         self.id = result.id
@@ -189,8 +188,8 @@ extension Array {
 
 extension ISO8601DateFormatter {
     static let displayDateFormatter: DateFormatter = {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "dd.MM.yyyy"
-            return formatter
-        }()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yyyy"
+        return formatter
+    }()
 }

@@ -25,7 +25,6 @@ final class ProfileImageService {
         request.httpMethod = "GET"
         print("Sending request to URL: \(url)")
         
-        // Используем objectTask из расширения URLSession
         urlSession.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
             switch result {
             case .success(let userResult):

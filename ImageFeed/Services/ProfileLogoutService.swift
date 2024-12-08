@@ -49,12 +49,21 @@ final class ProfileLogoutService {
         
         let webDataStore = WKWebsiteDataStore.default()
         webDataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
-            records.forEach { record in
+
+            let dispatchGroup = DispatchGroup()
+            
+            for record in records {
+                dispatchGroup.enter()
                 webDataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), for: [record]) {
                     print("Removed data for \(record.displayName)")
+                    dispatchGroup.leave()
                 }
             }
-            completion()
+            
+            dispatchGroup.notify(queue: .main) {
+                print("WKWebsiteDataStore cookies cleared.")
+                completion()
+            }
         }
     }
     

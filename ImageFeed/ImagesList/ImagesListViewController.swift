@@ -97,20 +97,16 @@ final class ImagesListViewController: UIViewController {
         let newPhotos = imagesListService.photos
         let oldCount = photos.count
         let newCount = newPhotos.count
-
-        // Проверяем, если новые фотографии добавлены
+        
+        
         guard newCount > oldCount else { return }
-
-        // Получаем только новые фотографии
+        
         let newPhotosToAdd = Array(newPhotos[oldCount..<newCount])
-
-        // Обновляем массив photos
+        
         photos.append(contentsOf: newPhotosToAdd)
-
-        // Создаем индексы для новых строк
+        
         let indexPathsToAdd = (oldCount..<newCount).map { IndexPath(row: $0, section: 0) }
-
-        // Выполняем вставку строк в таблицу
+        
         tableView.performBatchUpdates {
             tableView.insertRows(at: indexPathsToAdd, with: .automatic)
         }
@@ -128,12 +124,6 @@ final class ImagesListViewController: UIViewController {
                 self.photos[indexPath.row].isLoading = false
                 tableView?.reloadRows(at: [indexPath], with: .automatic)
             }
-        }
-        
-        if photo.isLoading {
-            cell.startGradientAnimation()
-        } else {
-            cell.stopGradientAnimation()
         }
         
         cell.dateLabel.text = ISO8601DateFormatter.displayDateFormatter.string(from: photo.createdAt ?? Date())
