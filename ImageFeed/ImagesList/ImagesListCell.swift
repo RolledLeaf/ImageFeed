@@ -7,7 +7,23 @@ final class ImagesListCell: UITableViewCell {
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var cellImageView: UIImageView!
     
-    func configurationButton(isActive: Bool) {
+    var likeButtonTappedAction: (() -> Void)?
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+    }
+    
+    
+    @IBAction func likeButtonTapped(_ sender: UIButton) {
+        likeButtonTappedAction?()
+    }
+    
+    func setIsLiked(isActive: Bool) {
         let buttonImageName = isActive ? "Active" : "No Active"
         likeButton.setImage(UIImage(named: buttonImageName), for: .normal)
     }
@@ -17,4 +33,3 @@ final class ImagesListCell: UITableViewCell {
         cellImageView.layer.masksToBounds = true
     }
 }
-

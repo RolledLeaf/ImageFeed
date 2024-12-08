@@ -23,17 +23,5 @@ final class OAuth2TokenStorage {
         }
     }
 
-    func clearToken() {
-        let success = KeychainWrapper.standard.removeObject(forKey: tokenKey)
-        print("Token removed from keychain with clearToken method successfully: \(success)")
-    }
-
-    func clearCookies() {
-        let cookieStore = WKWebsiteDataStore.default().httpCookieStore
-        cookieStore.getAllCookies { cookies in
-            for cookie in cookies {
-                cookieStore.delete(cookie)
-            }
-        }
-    }
+    
 }

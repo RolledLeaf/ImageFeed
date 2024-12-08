@@ -6,7 +6,6 @@ final class ProfileImageService {
     static let didChangeNotification = Notification.Name("ProfileImageDidChange")
     
     private let urlSession: URLSession = .shared
-    
     private(set) var avatarURL: String?
     
     private init() {}
@@ -26,15 +25,12 @@ final class ProfileImageService {
         request.httpMethod = "GET"
         print("Sending request to URL: \(url)")
         
-        // Используем objectTask из расширения URLSession
         urlSession.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
             switch result {
             case .success(let userResult):
                 print("Response received: \(userResult)")
                 if let profileImageURL = userResult.profileImage?.small {
                     self?.avatarURL = profileImageURL
-                    print("Profile image URL fetched: \(profileImageURL)")
-                    //Здесь была отправка уведомления
                     NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self, userInfo: ["URL": profileImageURL])
                     print("Notification posted")
                     completion(.success(profileImageURL))
