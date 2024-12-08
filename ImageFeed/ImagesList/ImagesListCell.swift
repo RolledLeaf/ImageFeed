@@ -59,7 +59,7 @@ final class ImagesListCell: UITableViewCell {
         likeButtonTappedAction?()
     }
     
-    func configurationButton(isActive: Bool) {
+    func setIsLiked(isActive: Bool) {
         let buttonImageName = isActive ? "Active" : "No Active"
         likeButton.setImage(UIImage(named: buttonImageName), for: .normal)
     }

@@ -136,7 +136,7 @@ final class ImagesListViewController: UIViewController {
         
         cell.dateLabel.text = ISO8601DateFormatter.displayDateFormatter.string(from: photo.createdAt ?? Date())
         
-        cell.configurationButton(isActive: photo.isLiked)
+        cell.setIsLiked(isActive: photo.isLiked)
         
         cell.likeButtonTappedAction = { [weak self] in
             guard let self = self else { return }
