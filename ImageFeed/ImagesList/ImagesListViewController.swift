@@ -24,13 +24,15 @@ final class ImagesListViewController: UIViewController {
     func likeButtonTapped(photoId: String, like: Bool, at indexPath: IndexPath) {
         guard isLikeActionAllowed else { return }
         isLikeActionAllowed = false
+        ProgressHUD.animate()
         
         imagesListService.updatePhotoLikeStatus(photoId: photoId, like: like) { result in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                 self.isLikeActionAllowed = true
             }
             
             DispatchQueue.main.async {
+                ProgressHUD.dismiss()
                 switch result {
                 case .success():
                     self.photos[indexPath.row].isLiked = like
