@@ -171,7 +171,7 @@ extension Photo {
     init(from result: PhotoResult) {
         self.id = result.id
         self.size = CGSize(width: result.width, height: result.height)
-        self.createdAt = ISO8601DateFormatter().date(from: result.createdAt ?? "")
+        self.createdAt = result.createdAt.flatMap { ISO8601DateFormatter.displayDateFormatter.date(from: $0) }
         self.welcomeDescription = result.description
         self.thumbImageURL = result.urls.thumb
         self.largeImageURL = result.urls.full
