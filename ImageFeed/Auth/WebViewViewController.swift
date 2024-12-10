@@ -1,16 +1,24 @@
 import UIKit
 import WebKit
 
-final class WebViewViewController: UIViewController {
+public protocol WebViewViewControllerProtocol: AnyObject {
+    var webViewPresenter: WebViewPresenterProtocol? { get set}
+    func load(request: URLRequest)
+}
+
+
+final class WebViewViewController: UIViewController, WebViewViewControllerProtocol {
     
     private let webView = WKWebView()
     private let backButton = UIButton(type: .custom)
     weak var delegate: WebViewViewControllerDelegate?
     private let progressBar = UIProgressView()
     private var estimatedProgressObservation: NSKeyValueObservation?
+    var webViewPresenter: WebViewPresenterProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
         estimatedProgressObservation = webView.observe(
             \.estimatedProgress,
              options: [.new]
@@ -18,41 +26,27 @@ final class WebViewViewController: UIViewController {
             guard let self = self else { return }
             self.updateProgress()
         }
+       
         webView.navigationDelegate = self
         setupWebView()
         setupBackButton()
         setupProgressBar()
-        loadAuthView()
+        webViewPresenter?.viewDidLoad()
         navigationItem.hidesBackButton = true
     }
-    
+    //Ответственность №3
     private func updateProgress() {
         progressBar.progress = Float(webView.estimatedProgress)
         progressBar.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
     }
     
-    private func loadAuthView() {
-        guard var urlComponents = URLComponents(string: WebViewConstants.unsplashAuthorizeURLString) else {
-            print("Loading error")
-            return
-        }
-        
-        urlComponents.queryItems = [
-            URLQueryItem(name: "client_id", value: Constants.accessKey),
-            URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
-            URLQueryItem(name: "response_type", value: "code"),
-            URLQueryItem(name: "scope", value: Constants.accessScope)
-        ]
-        
-        guard let url = urlComponents.url else {
-            print("Loading error")
-            return
-        }
-        
-        let request = URLRequest(url: url)
+    func load(request: URLRequest) {
         webView.load(request)
-        print("Authorization URL: \(url.absoluteString)")
     }
+    
+
+      
+
     
     private func setupProgressBar() {
         view.addSubview(progressBar)
@@ -67,7 +61,7 @@ final class WebViewViewController: UIViewController {
             
         ])
     }
-    
+    //Ответственность №4
     private func setupWebView() {
         view.addSubview(webView)
         webView.translatesAutoresizingMaskIntoConstraints = false
@@ -99,11 +93,13 @@ final class WebViewViewController: UIViewController {
         navigationController?.popViewController(animated: true)
     }
     
+    //Ответственность №1, пути запросов
     private enum WebViewConstants {
         static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
     }
 }
 
+//Ответственность №2. Метод извлечения кода авторизации и перенаправления
 private func code(from navigationAction: WKNavigationAction) -> String? {
     if
         let url = navigationAction.request.url,
@@ -120,8 +116,7 @@ private func code(from navigationAction: WKNavigationAction) -> String? {
 
 extension WebViewViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
-                 decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
-    ) {
+                 decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         if let code = code(from: navigationAction) {
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
             decisionHandler(.cancel)

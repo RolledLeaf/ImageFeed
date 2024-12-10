@@ -79,9 +79,17 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
     }
     
     @objc private func  loginButtonTapped() {
-        let webViewController = WebViewViewController()
-        webViewController.delegate = self
+        let webViewController = createWebViewModule()
         navigationController?.pushViewController(webViewController, animated: true)
+    }
+    
+    private func createWebViewModule() -> WebViewViewController {
+        let webViewPresenter = WebViewPresenter()
+        let webViewController = WebViewViewController()
+        webViewController.webViewPresenter = webViewPresenter
+        webViewPresenter.webView = webViewController
+        webViewController.delegate = self
+        return webViewController
     }
     
     private func handleAuthError(_ error: Error) {
