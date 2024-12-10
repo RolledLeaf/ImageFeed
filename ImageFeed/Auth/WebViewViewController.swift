@@ -4,6 +4,8 @@ import WebKit
 public protocol WebViewViewControllerProtocol: AnyObject {
     var webViewPresenter: WebViewPresenterProtocol? { get set}
     func load(request: URLRequest)
+    func setProgressValue(_ newValue: Float)
+    func setProgressHidden(_ isHidden: Bool)
 }
 
 
@@ -22,9 +24,9 @@ final class WebViewViewController: UIViewController, WebViewViewControllerProtoc
         estimatedProgressObservation = webView.observe(
             \.estimatedProgress,
              options: [.new]
-        ) { [weak self] _, _ in
-            guard let self = self else { return }
-            self.updateProgress()
+        ) { [weak self] _, change in
+            guard let self = self, let newValue = change.newValue else { return }
+            self.webViewPresenter?.didUpdateProgressValue(newValue)
         }
        
         webView.navigationDelegate = self
@@ -35,17 +37,18 @@ final class WebViewViewController: UIViewController, WebViewViewControllerProtoc
         navigationItem.hidesBackButton = true
     }
     //Ответственность №3
-    private func updateProgress() {
-        progressBar.progress = Float(webView.estimatedProgress)
-        progressBar.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
+     func setProgressValue(_ newValue: Float) {
+        progressBar.progress = newValue
+    }
+        
+    func setProgressHidden(_ isHidden: Bool) {
+        progressBar.isHidden = isHidden
     }
     
     func load(request: URLRequest) {
         webView.load(request)
     }
     
-
-      
 
     
     private func setupProgressBar() {
