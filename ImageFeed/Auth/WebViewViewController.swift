@@ -6,6 +6,7 @@ public protocol WebViewViewControllerProtocol: AnyObject {
     func load(request: URLRequest)
     func setProgressValue(_ newValue: Float)
     func setProgressHidden(_ isHidden: Bool)
+    
 }
 
 
@@ -95,36 +96,26 @@ final class WebViewViewController: UIViewController, WebViewViewControllerProtoc
         delegate?.webViewViewControllerDidCancel(self)
         navigationController?.popViewController(animated: true)
     }
-    
-    //Ответственность №1, пути запросов
-    private enum WebViewConstants {
-        static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
-    }
-}
-
-//Ответственность №2. Метод извлечения кода авторизации и перенаправления
-private func code(from navigationAction: WKNavigationAction) -> String? {
-    if
-        let url = navigationAction.request.url,
-        let urlComponents = URLComponents(string: url.absoluteString),
-        urlComponents.path == "/oauth/authorize/native",
-        let items = urlComponents.queryItems,
-        let codeItem = items.first(where: { $0.name == "code" })
-    {
-        return codeItem.value
-    } else {
-        return nil
-    }
 }
 
 extension WebViewViewController: WKNavigationDelegate {
-    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
-                 decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    func webView(
+        _ webView: WKWebView,
+        decidePolicyFor navigationAction: WKNavigationAction,
+        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+    ) {
         if let code = code(from: navigationAction) {
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
             decisionHandler(.cancel)
         } else {
             decisionHandler(.allow)
         }
+    }
+
+    private func code(from navigationAction: WKNavigationAction) -> String? {
+        if let url = navigationAction.request.url {
+            return webViewPresenter?.code(from: url)
+        }
+        return nil
     }
 }

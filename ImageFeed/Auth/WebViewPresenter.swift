@@ -4,6 +4,7 @@ public protocol WebViewPresenterProtocol {
     func viewDidLoad()
     func loadAuthView()
     func didUpdateProgressValue(_ newValue: Double)
+    func code(from url: URL) -> String?
 }
 
 final class WebViewPresenter: WebViewPresenterProtocol {
@@ -40,6 +41,18 @@ final class WebViewPresenter: WebViewPresenterProtocol {
         webView?.load(request: request)
     }
     
+    func code(from url: URL) -> String? {
+        if let urlComponents = URLComponents(string: url.absoluteString),
+           urlComponents.path == "/oauth/authorize/native",
+           let items = urlComponents.queryItems,
+           let codeItem = items.first(where: { $0.name == "code" })
+        {
+            return codeItem.value
+        } else {
+            return nil
+        }
+    }
+    
     func didUpdateProgressValue(_ newValue: Double) {
         let newProgressValue = Float(newValue)
         webView?.setProgressValue(newProgressValue)
@@ -54,8 +67,7 @@ final class WebViewPresenter: WebViewPresenterProtocol {
     
     
 }
-    
-    
+
     private enum WebViewConstants {
         static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
     }
