@@ -84,7 +84,8 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
     }
     
     private func createWebViewModule() -> WebViewViewController {
-        let webViewPresenter = WebViewPresenter()
+        let authHelper = AuthHelper()
+        let webViewPresenter = WebViewPresenter(authHelper: authHelper)
         let webViewController = WebViewViewController()
         webViewController.webViewPresenter = webViewPresenter
         webViewPresenter.webView = webViewController

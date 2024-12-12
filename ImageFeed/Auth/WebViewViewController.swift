@@ -9,7 +9,6 @@ public protocol WebViewViewControllerProtocol: AnyObject {
     
 }
 
-
 final class WebViewViewController: UIViewController, WebViewViewControllerProtocol {
     
     private let webView = WKWebView()
