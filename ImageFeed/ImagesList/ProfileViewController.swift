@@ -37,7 +37,7 @@ final class ProfileViewController: UIViewController {
         addAvatarGradientAnimation()
         loadProfile()
         
-        if let avatarURL = ProfileImageService.shared.avatarURL,// 16
+        if let avatarURL = ProfileImageService.shared.avatarURL,
            let url = URL(string: avatarURL) {
             print("Avatar URL already available: \(avatarURL)")
             updateAvatarImage(with: url)

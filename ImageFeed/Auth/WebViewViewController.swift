@@ -11,7 +11,7 @@ public protocol WebViewViewControllerProtocol: AnyObject {
 
 final class WebViewViewController: UIViewController, WebViewViewControllerProtocol {
     
-    private let webView = WKWebView()
+    internal var webView = WKWebView()
     private let backButton = UIButton(type: .custom)
     weak var delegate: WebViewViewControllerDelegate?
     private let progressBar = UIProgressView()
@@ -48,8 +48,6 @@ final class WebViewViewController: UIViewController, WebViewViewControllerProtoc
     func load(request: URLRequest) {
         webView.load(request)
     }
-    
-
     
     private func setupProgressBar() {
         view.addSubview(progressBar)
