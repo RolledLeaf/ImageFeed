@@ -5,6 +5,7 @@ import Kingfisher
     func updateUI(with profile: Profile) // Обновление интерфейса
     func showError(_ error: Error)
     func stopLoadingAnimation()
+     func updateAvatarImage(url: URL)
 }
 
 final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
@@ -47,16 +48,16 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         addGradientAnimationToLabels()
         addAvatarGradientAnimation()
         
-        if let avatarURL = ProfileImageService.shared.avatarURL,
-           let url = URL(string: avatarURL) {
-            print("Avatar URL already available: \(avatarURL)")
-            updateAvatarImage(with: url)
+        if let avatarURLString = ProfileImageService.shared.avatarURL,
+           let url = URL(string: avatarURLString) {  // Преобразуем строку в URL
+            print("Avatar URL already available: \(avatarURLString)")
+            presenter.updateAvatarImage(with: url)  // Передаем объект URL, а не строку
         }
     }
     private func setupNotificationObserver() {
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(updateAvatar(_:)),
+            selector: #selector(loadAvatar(_:)),
             name: ProfileImageService.didChangeNotification,
             object: nil
         )
@@ -156,8 +157,8 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         layer.removeFromSuperlayer()
     }
     
-    private func updateAvatarImage(with url: URL) {
-        print("update Avatar Image called.")
+    internal func updateAvatarImage(url: URL) {
+        print("updating avatar initiated...")
         DispatchQueue.main.async {
             self.profilePhotoView.kf.setImage(with: url,
                                               options: [
@@ -176,45 +177,14 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         }
     }
     
-    @objc private func updateAvatar(_ notification: Notification) {
-        print("updateAvatar called.")
-        guard let userInfo = notification.userInfo,
-              let avatarURLString = userInfo["URL"] as? String,
-              let avatarURL = URL(string: avatarURLString) else {
-            print("Failed to retrieve avatar URL from notification.")
-            return
-        }
-        
-        print("Received avatar URL in notification: \(avatarURLString)")
-        
-        DispatchQueue.main.async {
-            self.profilePhotoView.kf.setImage(with: avatarURL,
-                                              options: [
-                                                .transition(.fade(0.2)),
-                                                .cacheOriginalImage
-                                              ],
-                                              completionHandler: { result in
-                switch result {
-                case .success:
-                    print("Avatar image loaded successfully")
-                    
-                case .failure(let error):
-                    print("Failed to load avatar image: \(error.localizedDescription)")
-                }
-            }
-            )
-        }
+    @objc private func  loadAvatar(_ notification: Notification) {
+        presenter.handleAvatarNotification(notification: notification)
+        print("loadAvatar called")
     }
     
     private func loadProfile() {
         presenter.loadProfile()
     }
-    
-     
-    
-   
-    
-     
     
     private func configureLabel(_ label: UILabel, text: String, fontSize: CGFloat, weight: UIFont.Weight, color: Colors) {
         label.text = text
