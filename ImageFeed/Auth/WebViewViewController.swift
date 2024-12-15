@@ -2,7 +2,7 @@ import UIKit
 import WebKit
 
 public protocol WebViewViewControllerProtocol: AnyObject {
-    var webViewPresenter: WebViewPresenterProtocol? { get set}
+    var webViewPresenter: WebViewPresenterProtocol? { get set }
     func load(request: URLRequest)
     func setProgressValue(_ newValue: Float)
     func setProgressHidden(_ isHidden: Bool)

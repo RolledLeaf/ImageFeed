@@ -1,8 +1,18 @@
 import UIKit
 import Kingfisher
-final class ProfileViewController: UIViewController {
+
+ protocol ProfileViewControllerProtocol: AnyObject {
+    func updateUI(with profile: Profile) // Обновление интерфейса
+    func showError(_ error: Error)
+    func stopLoadingAnimation()
+}
+
+final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
+    
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        self.presenter = ProfileViewPresenter()
+        print("ProfileViewController initialized with presenter: \(String(describing: presenter))")
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         setupNotificationObserver()
     }
@@ -27,15 +37,15 @@ final class ProfileViewController: UIViewController {
     
     private var isObserverAdded = false
     
-    var profile: Profile?
+    var presenter = ProfileViewPresenter()
+    var profileVC: Profile?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        presenter.loadProfile()
         setupInitialUI()
         addGradientAnimationToLabels()
         addAvatarGradientAnimation()
-        loadProfile()
         
         if let avatarURL = ProfileImageService.shared.avatarURL,
            let url = URL(string: avatarURL) {
@@ -197,34 +207,14 @@ final class ProfileViewController: UIViewController {
     }
     
     private func loadProfile() {
-        ProfileService.shared.fetchProfile { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let profile):
-                    self?.updateUI(with: profile)
-                case .failure(let error):
-                    self?.showError(error)
-                }
-            }
-        }
+        presenter.loadProfile()
     }
     
-    private func updateUI(with profile: Profile) {
-        
-        profileNameLabel.text = profile.name
-        profileIDLabel.text = "@\(profile.username)"
-        profileDescriptionLabel.text = profile.bio
-        
-        stopGradientAnimation(for: nameGradientLayer)
-        stopGradientAnimation(for: idGradientLayer)
-        stopGradientAnimation(for: descriptionGradientLayer)
-    }
+     
     
-    private func showError(_ error: Error) {
-        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
-    }
+   
+    
+     
     
     private func configureLabel(_ label: UILabel, text: String, fontSize: CGFloat, weight: UIFont.Weight, color: Colors) {
         label.text = text
@@ -281,8 +271,29 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc func logoutButtonTapped() {
-        ProfileLogoutService.shared.logout()
+        presenter.logout()
     }
 }
 
+extension ProfileViewController {
+    func updateUI(with profile: Profile) {
+        print("Updating UI function initiated")
+       profileNameLabel.text = profile.name
+       profileIDLabel.text = "@\(profile.username)"
+       profileDescriptionLabel.text = profile.bio
+   }
+    
 
+    func showError(_ error: Error) {
+       let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+       alert.addAction(UIAlertAction(title: "OK", style: .default))
+       present(alert, animated: true)
+   }
+
+    func stopLoadingAnimation() {
+        print("stopLoadingAnimation function initiated")
+        stopGradientAnimation(for: nameGradientLayer)
+        stopGradientAnimation(for: idGradientLayer)
+        stopGradientAnimation(for: descriptionGradientLayer)
+    }
+}

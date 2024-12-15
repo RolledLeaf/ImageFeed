@@ -17,6 +17,9 @@ final class CustomTabBarController: UITabBarController {
         )
         
         let profileViewController = ProfileViewController()
+        let profilePresenter = ProfileViewPresenter()
+        profileViewController.presenter = profilePresenter
+        profilePresenter.view = profileViewController
         profileViewController.tabBarItem = UITabBarItem( title: "",
                                                          image: UIImage(named: "tab_profile_active"),
                                                          selectedImage: nil
@@ -30,11 +33,11 @@ final class CustomTabBarController: UITabBarController {
         
         for viewController in viewControllers {
             if let profileVC = viewController as? ProfileViewController {
-                profileVC.profile = profile
+                profileVC.profileVC = profile
             }
             if let navController = viewController as? UINavigationController,
                let profileVC = navController.viewControllers.first as? ProfileViewController {
-                profileVC.profile = profile
+                profileVC.profileVC = profile
             }
         }
     }
