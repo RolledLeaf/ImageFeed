@@ -12,9 +12,6 @@ import Kingfisher
 
 final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
     
-    
-    
-    
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         self.presenter = ProfileViewPresenter()
         print("ProfileViewController initialized with presenter: \(String(describing: presenter))")
@@ -26,7 +23,8 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
            fatalError("init(coder:) has not been implemented")
        }
     
-    private let profilePhotoView = UIImageView()
+    var profilePhotoView = UIImageView()
+    
     private let profileNameLabel = UILabel()
     private let profileIDLabel = UILabel()
     private let profileDescriptionLabel = UILabel()
