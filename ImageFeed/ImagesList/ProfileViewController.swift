@@ -6,9 +6,13 @@ import Kingfisher
     func showError(_ error: Error)
     func stopLoadingAnimation()
      func updateAvatarImage(url: URL)
+     func startAvatarAnimation()
+     var presenter: ProfileViewPresenterProtocol { get }
 }
 
 final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
+    
+    
     
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -19,8 +23,8 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
+           fatalError("init(coder:) has not been implemented")
+       }
     
     private let profilePhotoView = UIImageView()
     private let profileNameLabel = UILabel()
@@ -38,15 +42,16 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
     
     private var isObserverAdded = false
     
-    var presenter = ProfileViewPresenter()
+    
     var profileVC: Profile?
+    var presenter: ProfileViewPresenterProtocol
     
     override func viewDidLoad() {
         super.viewDidLoad()
         presenter.loadProfile()
         setupInitialUI()
         addGradientAnimationToLabels()
-        addAvatarGradientAnimation()
+        
         
         if let avatarURLString = ProfileImageService.shared.avatarURL,
            let url = URL(string: avatarURLString) {  // Преобразуем строку в URL
@@ -70,7 +75,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
     }
     
     
-    private func addAvatarGradientAnimation() {
+     func startAvatarAnimation() {
         print("avatar gradient animation started")
         // Настройка градиента
         avatarGradientLayer.colors = [
@@ -261,9 +266,10 @@ extension ProfileViewController {
    }
 
     func stopLoadingAnimation() {
-        print("stopLoadingAnimation function initiated")
+        
         stopGradientAnimation(for: nameGradientLayer)
         stopGradientAnimation(for: idGradientLayer)
         stopGradientAnimation(for: descriptionGradientLayer)
+        print("labels animation stopped")
     }
 }
