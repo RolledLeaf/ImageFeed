@@ -9,6 +9,7 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
     
     private let loginIcon = UIImageView()
     private let loginButton = UIButton()
+    
     weak var delegate: AuthViewControllerDelegate?
     
     override func viewDidLoad() {
@@ -59,6 +60,7 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
         loginButton.setTitleColor(.backgroundColor1A1B22, for: .normal)
         loginButton.layer.cornerRadius = 16
         loginButton.translatesAutoresizingMaskIntoConstraints = false
+        loginButton.accessibilityIdentifier = "LoginButton"
         view.addSubview(loginButton)
     }
     

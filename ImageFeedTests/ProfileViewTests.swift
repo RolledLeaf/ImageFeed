@@ -9,7 +9,7 @@ class ProfileViewPresenterMock: ProfileViewPresenterProtocol {
     
     func loadProfile() {
         let mockProfile = Profile(username: "test_user", name: "Test User", loginName:"@test_user", bio: "Test Bio")
-                view?.updateUI(with: mockProfile)
+        view?.updateUI(with: mockProfile)
     }
     
     func handleAvatarNotification(notification: Notification) {
@@ -32,7 +32,7 @@ final class MockProfileView: ProfileViewControllerProtocol {
     
     init(presenter: ProfileViewPresenterProtocol?) {
         self.presenter = presenter!
-       }
+    }
     
     
     
@@ -111,7 +111,7 @@ final class ProfileViewTests: XCTestCase {
         // Assert
         XCTAssertTrue(presenterMock.didUpdatedAvatarImage, "Expected `updateAvatarImage(with:)` to be called, but it was not.")
     }
-   
+    
     func testHandleAvatarNotification() {
         // Arrange
         let notification = Notification(name: Notification.Name("AvatarUpdated"))

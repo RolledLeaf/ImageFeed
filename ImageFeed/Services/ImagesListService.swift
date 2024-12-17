@@ -154,7 +154,6 @@ struct Photo: Decodable {
     var isLoading: Bool = true
 }
 
-
 struct PhotoResult: Decodable {
     let id: String
     let width: Int
@@ -169,11 +168,7 @@ struct PhotoResult: Decodable {
         case createdAt = "created_at"
         case likedByUser = "liked_by_user"
     }
-    
-    
-   
 }
-
 
 struct UrlsResult: Decodable {
     let thumb: URL

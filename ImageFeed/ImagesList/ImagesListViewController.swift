@@ -32,6 +32,7 @@ final class ImagesListViewController: UIViewController, ImagesListViewProtocol, 
         subscribeToNotifications()
         presenter.fetchPhotosNextPage()
         presenter.presenterDelegate = self
+        logSubviews(of: tableView)
     }
     
     // MARK: - Private Methods
@@ -41,6 +42,25 @@ final class ImagesListViewController: UIViewController, ImagesListViewProtocol, 
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 200
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+        tableView.accessibilityIdentifier = "FeedTableView"
+    }
+    
+    func logUIElements() {
+        for window in UIApplication.shared.windows {
+            logSubviews(of: window)
+        }
+    }
+
+    func logSubviews(of view: UIView) {
+        print("View: \(view)")
+        
+        if let accessibilityIdentifier = view.accessibilityIdentifier {
+            print("Identifier: \(accessibilityIdentifier)")
+        }
+        
+        for subview in view.subviews {
+            logSubviews(of: subview)
+        }
     }
     
     private func subscribeToNotifications() {
@@ -98,6 +118,7 @@ final class ImagesListViewController: UIViewController, ImagesListViewProtocol, 
     func configCell(for cell: ImagesListCell, with photo: Photo) {
         let placeholder = UIImage(named: "downloadingImageMock")
         let url = photo.thumbImageURL
+        
         
         cell.cellImageView.kf.indicatorType = .activity
         cell.cellImageView.kf.setImage(with: url, placeholder: placeholder) { [weak self, weak tableView] result in

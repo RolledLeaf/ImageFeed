@@ -207,6 +207,9 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
+        profileNameLabel.accessibilityIdentifier = "profileNameLabel"
+        profileIDLabel.accessibilityIdentifier = "profileIDLabel"
+        logoutButton.accessibilityIdentifier = "logoutButton"
         
         configureLabel(profileNameLabel, text:  "User name", fontSize: 23, weight: .bold, color: .nameColor)
         configureLabel(profileIDLabel, text: "User ID", fontSize: 13, weight: .regular, color: .idColor)

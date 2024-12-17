@@ -1,6 +1,4 @@
 
-
-
 import Foundation
 import XCTest
 @testable import ImageFeed
@@ -16,7 +14,7 @@ class MockImagesListPresenter: ImagesListPresenterProtocol {
     }
     
     func onImagesListServiceDidChange(_ notification: Notification) {
-       
+        
     }
     
     var fetchPhotosNextPageCalled = false
@@ -59,7 +57,7 @@ class MockImagesListService: ImagesListServiceProtocol {
     var mockPhotos: [Photo] = []
     var mockUpdateLikeSuccess: Bool = true
     var mockError: Error?
-
+    
     func fetchPhotosNextPage(completion: @escaping (Result<[Photo], Error>) -> Void) {
         if let error = mockError {
             completion(.failure(error))
@@ -67,7 +65,7 @@ class MockImagesListService: ImagesListServiceProtocol {
             completion(.success(mockPhotos))
         }
     }
-
+    
     func updatePhotoLikeStatus(photoId: String, like: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
         if mockUpdateLikeSuccess {
             completion(.success(()))
@@ -121,7 +119,7 @@ final class ImagesListPresenterTests: XCTestCase {
         
         wait(for: [expectation], timeout: 2.0)
     }
-
+    
     func testLikeButtonTappedShowsErrorOnFailure() {
         // Arrange
         let mockView = MockImagesListView()
