@@ -1,41 +1,43 @@
 import Foundation
+import ProgressHUD
 
 protocol ImagesListPresenterProtocol: AnyObject {
     func fetchPhotosNextPage()
     func likeButtonTapped(photoId: String, like: Bool, at indexPath: IndexPath)
-    func onImageListServiceDidChange(_ notification: Notification)
+    func onImagesListServiceDidChange(_ notification: Notification)
     
-    var photos: [Photo] { get }
+    var presenterDelegate: ImagesListPresenterDelegate? { get set }
+    var photos: [Photo] { get set }
 }
 
 final class ImagesListPresenter: ImagesListPresenterProtocol {
-   
-    
+    weak var presenterDelegate: ImagesListPresenterDelegate?
     
     private var service = ImagesListService()
     var photos: [Photo] = []
     var view: ImagesListViewProtocol?
     var isLikeActionAllowed = true
+    
     init(view: ImagesListViewController, service: ImagesListService) {
         self.view = view
-        print("Presenter view is set: \(view)")
         self.service = service
+        print("Presenter view is set: \(view)")
     }
     
     func likeButtonTapped(photoId: String, like: Bool, at indexPath: IndexPath) {
         guard isLikeActionAllowed else { return }
         isLikeActionAllowed = false
+        ProgressHUD.animate()
 
         service.updatePhotoLikeStatus(photoId: photoId, like: like) { [weak self] result in
             guard let self = self else { return }
 
-            // Разрешить следующую акцию спустя задержку
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                 self.isLikeActionAllowed = true
             }
-
-            // Сообщить представлению о результате
+            
             DispatchQueue.main.async {
+                ProgressHUD.dismiss()
                 switch result {
                 case .success():
                     self.photos[indexPath.row].isLiked = like
@@ -47,28 +49,36 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
         }
     }
     
-    func onImageListServiceDidChange(_ notification: Notification) {
+    func onImagesListServiceDidChange(_ notification: Notification) {
+        guard let newPhotos = notification.object as? [Photo] else { return }
+
+        let oldCount = photos.count
+        let newCount = newPhotos.count
         
+        guard newCount > oldCount else { return }
+        
+        let newPhotosToAdd = Array(newPhotos[oldCount..<newCount])
+
+        photos.append(contentsOf: newPhotosToAdd)
+
+        presenterDelegate?.didUpdatePhotos(at: IndexSet(integersIn: oldCount..<newCount))
     }
-    
-    
-  
-    
+
     func fetchPhotosNextPage() {
         print("Calling service to fetch next page of photos")
 
-            service.fetchPhotosNextPage { [weak self] result in
-                switch result {
-                case .success(let newPhotos):
-                    print("Success case")
-                    self?.photos.append(contentsOf: newPhotos)
-                    print("Photos count: \(String(describing: self?.photos.count))")
-                    self?.view?.reloadData()
-                    print("ReloadData called on view")
-                case .failure(let error):
-                    print("Faile case")
-                    self?.view?.showError(error)  // Показываем ошибку через метод в представлении
-                }
+        service.fetchPhotosNextPage { [weak self] result in
+            switch result {
+            case .success(let newPhotos):
+                print("Photos fetched successfully")
+                self?.photos.append(contentsOf: newPhotos)
+                print("Photos count: \(String(describing: self?.photos.count))")
+                self?.view?.reloadData()
+                print("ReloadData called on view")
+            case .failure(let error):
+                print("Failed to fetch photos")
+                self?.view?.showError(error)
             }
         }
+    }
 }

@@ -17,12 +17,13 @@ final class ImagesListService {
     
     
     func fetchPhotosNextPage(completion: @escaping (Result<[Photo], Error>) -> Void) {
-        print("Fetching next page of images...")
+        let nextPage = (lastLoadedPage ?? 0) + 1
+        print("Fetching next page of images: \(nextPage)")
         guard !isLoading else { return }
         isLoading = true
         startLoadingNotification()
         
-        let nextPage = (lastLoadedPage ?? 0) + 1
+       
         guard let url = URL(string: "\(baseURL)/photos?page=\(nextPage)&per_page=10") else {
             print("Invalid URL")
             completion(.failure(NetworkError.invalidURL)) // Передаём ошибку
