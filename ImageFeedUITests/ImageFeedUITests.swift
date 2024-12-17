@@ -9,7 +9,7 @@ import XCTest
 
 final class ImageFeedUITests: XCTestCase {
     
-    import XCTest
+
     
     class Image_FeedUITests: XCTestCase {
         

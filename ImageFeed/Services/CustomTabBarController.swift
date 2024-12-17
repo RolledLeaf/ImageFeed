@@ -12,9 +12,16 @@ final class CustomTabBarController: UITabBarController {
     override func awakeFromNib() {
         super.awakeFromNib()
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
-        let imagesListViewController = storyboard.instantiateViewController(
-            withIdentifier: "ImagesListViewController"
-        )
+           guard let imagesListViewController = storyboard.instantiateViewController(
+               withIdentifier: "ImagesListViewController"
+           ) as? ImagesListViewController else {
+               fatalError("Failed to instantiate ImagesListViewController")
+           }
+           
+           // Создание service и presenter
+           let imagesListService = ImagesListService()
+           let imagesListPresenter = ImagesListPresenter(view: imagesListViewController, service: imagesListService)
+           imagesListViewController.presenter = imagesListPresenter
         
         let profileViewController = ProfileViewController()
         let profilePresenter = ProfileViewPresenter()
