@@ -1,6 +1,5 @@
 import UIKit
 
-
 protocol ProfileGradientHelperProtocol {
     func configureGradientLayer(_ layer: CAGradientLayer, for view: UIView)
     func startGradientAnimation(for imageView: UIImageView)
@@ -8,7 +7,6 @@ protocol ProfileGradientHelperProtocol {
     func addAvatarGradientAnimation(for imageView: UIImageView)
     func removeAvatarGradientAnimation(from imageView: UIImageView)
 }
-
 
 class ProfileGradientHelper: ProfileGradientHelperProtocol {
     

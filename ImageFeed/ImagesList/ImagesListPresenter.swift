@@ -13,12 +13,12 @@ protocol ImagesListPresenterProtocol: AnyObject {
 final class ImagesListPresenter: ImagesListPresenterProtocol {
     weak var presenterDelegate: ImagesListPresenterDelegate?
     
-    private var service = ImagesListService()
+    var service: ImagesListServiceProtocol
     var photos: [Photo] = []
     var view: ImagesListViewProtocol?
     var isLikeActionAllowed = true
     
-    init(view: ImagesListViewController, service: ImagesListService) {
+    init(view: ImagesListViewProtocol, service: ImagesListServiceProtocol) {
         self.view = view
         self.service = service
         print("Presenter view is set: \(view)")
@@ -28,10 +28,10 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
         guard isLikeActionAllowed else { return }
         isLikeActionAllowed = false
         ProgressHUD.animate()
-
+        
         service.updatePhotoLikeStatus(photoId: photoId, like: like) { [weak self] result in
             guard let self = self else { return }
-
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                 self.isLikeActionAllowed = true
             }
@@ -51,22 +51,22 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
     
     func onImagesListServiceDidChange(_ notification: Notification) {
         guard let newPhotos = notification.object as? [Photo] else { return }
-
+        
         let oldCount = photos.count
         let newCount = newPhotos.count
         
         guard newCount > oldCount else { return }
         
         let newPhotosToAdd = Array(newPhotos[oldCount..<newCount])
-
+        
         photos.append(contentsOf: newPhotosToAdd)
-
+        
         presenterDelegate?.didUpdatePhotos(at: IndexSet(integersIn: oldCount..<newCount))
     }
-
+    
     func fetchPhotosNextPage() {
         print("Calling service to fetch next page of photos")
-
+        
         service.fetchPhotosNextPage { [weak self] result in
             switch result {
             case .success(let newPhotos):

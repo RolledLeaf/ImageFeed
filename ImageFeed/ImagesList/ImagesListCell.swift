@@ -11,13 +11,11 @@ final class ImagesListCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
     }
-    
     
     @IBAction func likeButtonTapped(_ sender: UIButton) {
         likeButtonTappedAction?()
@@ -26,6 +24,8 @@ final class ImagesListCell: UITableViewCell {
     func setIsLiked(isActive: Bool) {
         let buttonImageName = isActive ? "Active" : "No Active"
         likeButton.setImage(UIImage(named: buttonImageName), for: .normal)
+        likeButton.accessibilityIdentifier =  "LikeButton"
+        
     }
     
     func roundCorners() {

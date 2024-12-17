@@ -3,11 +3,11 @@ import XCTest
 class WebViewPresenterMock: WebViewPresenterProtocol {
     weak var webView: WebViewViewControllerProtocol?
     var isViewDidLoadCalled = false
-
+    
     func viewDidLoad() {
         isViewDidLoadCalled = true
     }
-
+    
     func loadAuthView() { }
     func didUpdateProgressValue(_ newValue: Double) { }
     func code(from url: URL) -> String? { return nil }
@@ -17,19 +17,19 @@ final class WebViewViewControllerSpy: WebViewViewControllerProtocol {
     var webViewPresenter: (any ImageFeed.WebViewPresenterProtocol)?
     
     var presenter: ImageFeed.WebViewPresenterProtocol?
-
+    
     var loadRequestCalled: Bool = false
-
+    
     func load(request: URLRequest) {
         loadRequestCalled = true
     }
-
+    
     func setProgressValue(_ newValue: Float) {
-
+        
     }
-
+    
     func setProgressHidden(_ isHidden: Bool) {
-
+        
     }
 }
 
@@ -109,9 +109,9 @@ final class WebViewViewControllerTests: XCTestCase {
         let encodedAccessScope = configuration.accessScope.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
         let url = authHelper.authURL()
         
-       guard let urlString = url?.absoluteString else {
+        guard let urlString = url?.absoluteString else {
             XCTFail("Auth URL is nil")
-           return
+            return
         }
         
         XCTAssertTrue(urlString.contains(configuration.authorizeURLString))

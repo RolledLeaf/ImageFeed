@@ -25,13 +25,13 @@ struct AuthConfiguration {
         self.defaultBaseURL = defaultBaseURL
         self.authorizeURLString = authorizeURLString
     }
-        static var standard: AuthConfiguration {
-            return AuthConfiguration(accessKey: Constants.accessKey,
-                                     secretKey: Constants.secretKey,
-                                     redirectURI: Constants.redirectURI,
-                                     accessScope: Constants.accessScope,
-                                     defaultBaseURL: Constants.defaultBaseURL,
-                                     authorizeURLString: Constants.unsplashAuthorizeURLString)
+    static var standard: AuthConfiguration {
+        return AuthConfiguration(accessKey: Constants.accessKey,
+                                 secretKey: Constants.secretKey,
+                                 redirectURI: Constants.redirectURI,
+                                 accessScope: Constants.accessScope,
+                                 defaultBaseURL: Constants.defaultBaseURL,
+                                 authorizeURLString: Constants.unsplashAuthorizeURLString)
         
     }
 }

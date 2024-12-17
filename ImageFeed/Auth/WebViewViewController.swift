@@ -30,6 +30,7 @@ final class WebViewViewController: UIViewController, WebViewViewControllerProtoc
         }
        
         webView.navigationDelegate = self
+        webView.accessibilityIdentifier = "UnsplashWebView"
         setupWebView()
         setupBackButton()
         setupProgressBar()
@@ -62,9 +63,10 @@ final class WebViewViewController: UIViewController, WebViewViewControllerProtoc
             
         ])
     }
-    //Ответственность №4
+    
     private func setupWebView() {
         view.addSubview(webView)
+        webView.accessibilityIdentifier = "UnsplashWebView"
         webView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
