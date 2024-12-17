@@ -1,6 +1,8 @@
 import UIKit
 import Foundation
 
+
+
 final class ImagesListService {
     
     static let didChangeNotification = Notification.Name("ImagesListServiceDidChange")
@@ -14,18 +16,19 @@ final class ImagesListService {
     private let baseURL = "https://api.unsplash.com"
     
     
-    func fetchPhotosNextPage() {
+    func fetchPhotosNextPage(completion: @escaping (Result<[Photo], Error>) -> Void) {
         print("Fetching next page of images...")
         guard !isLoading else { return }
         isLoading = true
         startLoadingNotification()
         
-        
         let nextPage = (lastLoadedPage ?? 0) + 1
         guard let url = URL(string: "\(baseURL)/photos?page=\(nextPage)&per_page=10") else {
             print("Invalid URL")
+            completion(.failure(NetworkError.invalidURL)) // Передаём ошибку
             return
         }
+        
         var request = URLRequest(url: url)
         request.addValue("Bearer \(OAuth2TokenStorage.shared.token ?? "")", forHTTPHeaderField: "Authorization")
         
@@ -35,6 +38,7 @@ final class ImagesListService {
             
             if let error = error {
                 print("Network error: \(error.localizedDescription)")
+                completion(.failure(error)) // Передаём ошибку
                 return
             }
             
@@ -42,14 +46,11 @@ final class ImagesListService {
                 print("HTTP Status Code: \(httpResponse.statusCode)")
             }
             
-            guard let data = data,
-                  let responseString = String(data: data, encoding: .utf8)
-                    
-            else {
+            guard let data = data else {
                 print("No data received.")
+                completion(.failure(NetworkError.noData)) // Передаём ошибку
                 return
-            } //временно убрал полный ответ \(responseString)
-            print("Response body: temporary shortened")
+            }
             
             do {
                 let photoResults = try JSONDecoder().decode([PhotoResult].self, from: data)
@@ -59,14 +60,13 @@ final class ImagesListService {
                 DispatchQueue.main.async {
                     self.photos.append(contentsOf: newPhotos)
                     self.lastLoadedPage = nextPage
-                    
                     self.stopLoadingNotification()
-                    
                     self.didChangeNotification()
-                    
+                    completion(.success(newPhotos)) // Передаём успешный результат
                 }
             } catch {
                 print("Decoding error: \(error.localizedDescription)")
+                completion(.failure(error)) // Передаём ошибку декодирования
             }
         }
         task.resume()
@@ -131,6 +131,12 @@ final class ImagesListService {
             object: self
         )
     }
+    
+    enum NetworkError: Error {
+        case invalidURL
+        case noData
+        case decodingError
+    }
 }
 
 struct Photo: Decodable {
@@ -159,6 +165,8 @@ struct PhotoResult: Decodable {
         case createdAt = "created_at"
         case likedByUser = "liked_by_user"
     }
+    
+   
 }
 
 struct UrlsResult: Decodable {
