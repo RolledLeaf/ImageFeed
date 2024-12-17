@@ -1,9 +1,12 @@
 import UIKit
 import Foundation
 
+protocol ImagesListServiceProtocol {
+    func fetchPhotosNextPage(completion: @escaping (Result<[Photo], Error>) -> Void)
+    func updatePhotoLikeStatus(photoId: String, like: Bool, completion: @escaping (Result<Void, Error>) -> Void)
+}
 
-
-final class ImagesListService {
+final class ImagesListService: ImagesListServiceProtocol {
     
     static let didChangeNotification = Notification.Name("ImagesListServiceDidChange")
     static let didStartLoadingNotification = Notification.Name("ImagesListServiceDidStartLoading")
@@ -142,11 +145,11 @@ final class ImagesListService {
 
 struct Photo: Decodable {
     let id: String
-    let size: CGSize
-    let createdAt: Date?
-    let welcomeDescription: String?
-    let thumbImageURL: URL
-    let largeImageURL: URL
+    var size: CGSize = .zero
+    var createdAt: Date? = nil
+    var welcomeDescription: String? = nil
+    var thumbImageURL: URL? = nil
+    var largeImageURL: URL? = nil
     var isLiked: Bool
     var isLoading: Bool = true
 }
@@ -156,7 +159,7 @@ struct PhotoResult: Decodable {
     let id: String
     let width: Int
     let height: Int
-    let createdAt: String?
+    var createdAt: String? = nil
     let description: String?
     let urls: UrlsResult
     let likedByUser: Bool
@@ -167,8 +170,10 @@ struct PhotoResult: Decodable {
         case likedByUser = "liked_by_user"
     }
     
+    
    
 }
+
 
 struct UrlsResult: Decodable {
     let thumb: URL

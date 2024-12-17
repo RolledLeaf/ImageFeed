@@ -24,8 +24,6 @@ class ProfileViewPresenterMock: ProfileViewPresenterProtocol {
     var didCallLogout = false
     var didUpdatedAvatarImage = false
     var didRecieveAvatarNotification = false
-    
-    
 }
 
 final class MockProfileView: ProfileViewControllerProtocol {
