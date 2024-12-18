@@ -6,6 +6,8 @@ import ProgressHUD
 
 protocol ImagesListViewProtocol: AnyObject {
     func reloadData()
+    func animateHUD()
+    func dismissHUD()
     func showError(_ error: any Error)
     func updateRow(at indexPath: IndexPath)
 }
@@ -75,6 +77,13 @@ final class ImagesListViewController: UIViewController, ImagesListViewProtocol, 
             name: ImagesListService.didStartLoadingNotification,
             object: nil
         )
+    }
+    func animateHUD() {
+        ProgressHUD.animate()
+    }
+    
+    func dismissHUD() {
+        ProgressHUD.dismiss()
     }
     
     private func subscribeToFinishLoadingNotification() {

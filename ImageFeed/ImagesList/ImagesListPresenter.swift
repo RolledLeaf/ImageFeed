@@ -27,7 +27,7 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
     func likeButtonTapped(photoId: String, like: Bool, at indexPath: IndexPath) {
         guard isLikeActionAllowed else { return }
         isLikeActionAllowed = false
-        ProgressHUD.animate()
+        view?.animateHUD()
         
         service.updatePhotoLikeStatus(photoId: photoId, like: like) { [weak self] result in
             guard let self = self else { return }
@@ -37,7 +37,7 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
             }
             
             DispatchQueue.main.async {
-                ProgressHUD.dismiss()
+                self.view?.dismissHUD()
                 switch result {
                 case .success():
                     self.photos[indexPath.row].isLiked = like

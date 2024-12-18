@@ -5,9 +5,9 @@ import Kingfisher
     func updateUI(with profile: Profile) // Обновление интерфейса
     func showError(_ error: Error)
     func stopLoadingAnimation()
-     func updateAvatarImage(url: URL)
-     func startAvatarAnimation()
-     var presenter: ProfileViewPresenterProtocol { get }
+    func updateAvatarImage(url: URL)
+    func startAvatarAnimation()
+    var presenter: ProfileViewPresenterProtocol { get }
 }
 
 final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
@@ -23,8 +23,6 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
            fatalError("init(coder:) has not been implemented")
        }
     
-    var profilePhotoView = UIImageView()
-    
     private let profileNameLabel = UILabel()
     private let profileIDLabel = UILabel()
     private let profileDescriptionLabel = UILabel()
@@ -39,7 +37,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
     private let descriptionGradientLayer = CAGradientLayer()
     
     private var isObserverAdded = false
-    
+    private var profilePhotoView = UIImageView()
     
     var profileVC: Profile?
     var presenter: ProfileViewPresenterProtocol
@@ -160,7 +158,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         layer.removeFromSuperlayer()
     }
     
-    internal func updateAvatarImage(url: URL) {
+    func updateAvatarImage(url: URL) {
         print("updating avatar initiated...")
         DispatchQueue.main.async {
             self.profilePhotoView.kf.setImage(with: url,

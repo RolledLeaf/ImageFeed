@@ -13,7 +13,6 @@ final class ProfileViewPresenter: ProfileViewPresenterProtocol {
     
     weak var view: ProfileViewControllerProtocol?
     
-    
     func logout() {
         ProfileLogoutService.shared.logout()
     }

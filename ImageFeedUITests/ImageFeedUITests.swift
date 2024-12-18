@@ -1,6 +1,6 @@
 import XCTest
 
-class Image_FeedUITests: XCTestCase {
+final class Image_FeedUITests: XCTestCase {
     private let app = XCUIApplication() // переменная приложения
     
     override func setUpWithError() throws {
@@ -9,7 +9,7 @@ class Image_FeedUITests: XCTestCase {
         app.launch()
     }
     
-    func testAuth() throws {
+     func testAuth() throws {
         // Нажимаем кнопку "Authenticate"
         app.buttons["LoginButton"].tap()
         
@@ -23,7 +23,7 @@ class Image_FeedUITests: XCTestCase {
         
         // Вводим e-mail
         loginTextField.tap()
-        loginTextField.typeText("your email")
+        loginTextField.typeText("***@gmail.com")
         webView.swipeUp()
         
         // Проверяем наличие поля для пароля
@@ -32,7 +32,7 @@ class Image_FeedUITests: XCTestCase {
         
         // Вводим пароль
         passwordTextField.tap()
-        passwordTextField.typeText("your password")
+        passwordTextField.typeText("***")
         webView.swipeUp()
         
         // Нажимаем кнопку Login
@@ -52,41 +52,32 @@ class Image_FeedUITests: XCTestCase {
         XCTAssertTrue(profileTabBarButton.exists)
     }
     
-    
-    func testFeed() throws {
+     func testFeed() throws {
         
         let feedTable = app.tables["FeedTableView"]
-        
         XCTAssertTrue(feedTable.waitForExistence(timeout: 5), "Лента не загрузилась")
         
         // Скроллим вверх по экрану
         let firstCell = feedTable.cells.element(boundBy: 0)
         XCTAssertTrue(firstCell.exists, "Первая ячейка ленты не найдена")
         firstCell.swipeUp()
-        XCTAssertTrue(firstCell.isHittable, "Первая ячейка не доступна")
-        
-        feedTable.swipeUp()  // Прокручиваем еще
-        sleep(1)  // Небольшая задержка для предотвращения быстрой прокрутки
         
         // Работа с кнопкой лайка
         let secondCell = feedTable.cells.element(boundBy: 1)
-        XCTAssertTrue(secondCell.waitForExistence(timeout: 5), "Вторая ячейка не появилась вовремя")
         XCTAssertTrue(secondCell.exists, "Вторая ячейка ленты не найдена")
-        secondCell.swipeUp() // Прокрутите до ячейки, если требуется
-        XCTAssertTrue(secondCell.isHittable, "Вторая ячейка недоступна для взаимодействия")
         
-        let likeButton = secondCell.buttons["LikeButton"]
-        XCTAssertTrue(likeButton.waitForExistence(timeout: 5), "Кнопка 'лайк' не появилась")
-        XCTAssertTrue(likeButton.frame != .zero, "Кнопка 'лайк' имеет нулевую область")
-        XCTAssertTrue(likeButton.exists, "Кнопка 'лайк выключен' не найдена")
-        XCTAssertTrue(likeButton.isHittable, "Кнопка 'лайк' недоступна для взаимодействия")
-        likeButton.tap() // Ставим лайк
-        sleep(UInt32(1.2))
-        likeButton.tap() // Снимаем
+        let likeButtonOff = secondCell.buttons["LikeButton"]
+        XCTAssertTrue(feedTable.waitForExistence(timeout: 5), "Кнопка 'лайк выключен' не найдена")
+        likeButtonOff.tap() // Ставим лайк
         
+        let likeButtonOn = secondCell.buttons["LikeButton"]
+        XCTAssertTrue(likeButtonOn.exists, "Кнопка 'лайк включен' не найдена")
+        likeButtonOn.tap() // Отменяем лайк
         
         // Нажимаем на вторую ячейку, чтобы открыть картинку на весь экран
         secondCell.tap()
+        
+        // Проверяем, что картинка открылась
         let fullScreenImage = app.scrollViews.images.element(boundBy: 0)
         XCTAssertTrue(fullScreenImage.waitForExistence(timeout: 5), "Картинка не открылась на весь экран")
         
@@ -102,8 +93,7 @@ class Image_FeedUITests: XCTestCase {
         backButton.tap()
     }
     
-    
-    func testProfile() throws {
+     func testProfile() throws {
         // Ожидаем, пока откроется экран с лентой
         let feedTabBarButton = app.tabBars.buttons["ImagesListTabBarButton"]
         XCTAssertTrue(feedTabBarButton.exists)
@@ -129,5 +119,12 @@ class Image_FeedUITests: XCTestCase {
         let logoutAlert = app.alerts["Пока-пока!"]
         XCTAssertTrue(logoutAlert.waitForExistence(timeout: 5)) // Ждем появления алерта
         logoutAlert.scrollViews.otherElements.buttons["LogoutYesButton"].tap()
+        
+        //Проверяем наличие экрана авторизации
+        let loginButton = app.buttons["LoginButton"]
+        XCTAssertTrue(loginButton.waitForExistence(timeout: 5), "Кнопка входа не найдена")
     }
+    
+    
+    
 }

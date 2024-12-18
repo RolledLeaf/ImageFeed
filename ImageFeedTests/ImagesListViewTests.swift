@@ -3,7 +3,7 @@ import Foundation
 import XCTest
 @testable import ImageFeed
 
-class MockImagesListPresenter: ImagesListPresenterProtocol {
+final class MockImagesListPresenter: ImagesListPresenterProtocol {
     func fetchPhotosNextPage() {
         fetchPhotosNextPageCalled = true
     }
@@ -26,7 +26,11 @@ class MockImagesListPresenter: ImagesListPresenterProtocol {
     
 }
 
-class MockImagesListView: ImagesListViewProtocol {
+final class MockImagesListView: ImagesListViewProtocol {
+    func animateHUD() { }
+    
+    func dismissHUD() { }
+    
     var reloadDataCalled = false
     var updateRowCalled = false
     var updateRowIndexPath: IndexPath?
@@ -52,7 +56,7 @@ class MockImagesListView: ImagesListViewProtocol {
     }
 }
 
-class MockImagesListService: ImagesListServiceProtocol {
+final class MockImagesListService: ImagesListServiceProtocol {
     var shouldFail = false
     var mockPhotos: [Photo] = []
     var mockUpdateLikeSuccess: Bool = true

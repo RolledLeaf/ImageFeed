@@ -1,6 +1,7 @@
 import XCTest
+@testable import ImageFeed
 
-class WebViewPresenterMock: WebViewPresenterProtocol {
+final class WebViewPresenterMock: WebViewPresenterProtocol {
     weak var webView: WebViewViewControllerProtocol?
     var isViewDidLoadCalled = false
     
@@ -24,17 +25,10 @@ final class WebViewViewControllerSpy: WebViewViewControllerProtocol {
         loadRequestCalled = true
     }
     
-    func setProgressValue(_ newValue: Float) {
-        
-    }
+    func setProgressValue(_ newValue: Float) { }
     
-    func setProgressHidden(_ isHidden: Bool) {
-        
-    }
+    func setProgressHidden(_ isHidden: Bool) { }
 }
-
-
-@testable import ImageFeed
 
 final class WebViewViewControllerTests: XCTestCase {
     var viewController: WebViewViewController!
@@ -63,7 +57,6 @@ final class WebViewViewControllerTests: XCTestCase {
         // Проверяем, что метод viewDidLoad у презентера вызван
         XCTAssertTrue(presenterMock.isViewDidLoadCalled)
     }
-    
     
     func testPresenterCallsLoadRequest() {
         //given
@@ -100,7 +93,6 @@ final class WebViewViewControllerTests: XCTestCase {
         let shouldHideProgress = presenter.shouldHideProgress(for: progress)
         
         XCTAssertTrue(shouldHideProgress)
-        
     }
     
     func testAuthHelperAuthURL() {
@@ -119,7 +111,6 @@ final class WebViewViewControllerTests: XCTestCase {
         XCTAssertTrue(urlString.contains(configuration.redirectURI))
         XCTAssertTrue(urlString.contains("code"))
         XCTAssertTrue(urlString.contains(encodedAccessScope ?? ""))
-        
     }
     
     func testCodeFromURL() {

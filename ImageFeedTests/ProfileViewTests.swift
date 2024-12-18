@@ -1,8 +1,8 @@
-
+@testable import ImageFeed
 import Foundation
 import XCTest
 
-class ProfileViewPresenterMock: ProfileViewPresenterProtocol {
+final class ProfileViewPresenterMock: ProfileViewPresenterProtocol {
     func logout() {
         didCallLogout = true
     }
@@ -34,8 +34,6 @@ final class MockProfileView: ProfileViewControllerProtocol {
         self.presenter = presenter!
     }
     
-    
-    
     var didCallUpdateUI = false
     var didCallShowError = false
     var didCallUpdateAvatarImage = false
@@ -56,8 +54,6 @@ final class MockProfileView: ProfileViewControllerProtocol {
     
     func startAvatarAnimation() { }
 }
-
-@testable import ImageFeed
 
 final class ProfileViewTests: XCTestCase {
     
@@ -135,5 +131,4 @@ final class ProfileViewTests: XCTestCase {
         // Assert
         XCTAssertTrue(mockView.didCallShowError, "Expected `showError(_:)` to be called, but it was not.")
     }
-    
 }

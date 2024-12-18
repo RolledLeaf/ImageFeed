@@ -11,7 +11,7 @@ public protocol WebViewViewControllerProtocol: AnyObject {
 
 final class WebViewViewController: UIViewController, WebViewViewControllerProtocol {
     
-    internal var webView = WKWebView()
+    var webView = WKWebView()
     private let backButton = UIButton(type: .custom)
     weak var delegate: WebViewViewControllerDelegate?
     private let progressBar = UIProgressView()

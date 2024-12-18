@@ -59,7 +59,7 @@
                                                     <color key="textColor" name="Date color"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AIF-l3-5Lm" userLabel="Like Button">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AIF-l3-5Lm" userLabel="LikeButton">
                                                     <rect key="frame" x="333" y="4" width="44" height="44"/>
                                                     <accessibility key="accessibilityConfiguration" identifier="LikeButton"/>
                                                     <constraints>
