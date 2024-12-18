@@ -1,17 +1,28 @@
 import UIKit
 import Kingfisher
-final class ProfileViewController: UIViewController {
+
+ protocol ProfileViewControllerProtocol: AnyObject {
+    func updateUI(with profile: Profile) // Обновление интерфейса
+    func showError(_ error: Error)
+    func stopLoadingAnimation()
+    func updateAvatarImage(url: URL)
+    func startAvatarAnimation()
+    var presenter: ProfileViewPresenterProtocol { get }
+}
+
+final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        self.presenter = ProfileViewPresenter()
+        print("ProfileViewController initialized with presenter: \(String(describing: presenter))")
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         setupNotificationObserver()
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
+           fatalError("init(coder:) has not been implemented")
+       }
     
-    private let profilePhotoView = UIImageView()
     private let profileNameLabel = UILabel()
     private let profileIDLabel = UILabel()
     private let profileDescriptionLabel = UILabel()
@@ -26,27 +37,28 @@ final class ProfileViewController: UIViewController {
     private let descriptionGradientLayer = CAGradientLayer()
     
     private var isObserverAdded = false
+    private var profilePhotoView = UIImageView()
     
-    var profile: Profile?
+    var profileVC: Profile?
+    var presenter: ProfileViewPresenterProtocol
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        presenter.loadProfile()
         setupInitialUI()
         addGradientAnimationToLabels()
-        addAvatarGradientAnimation()
-        loadProfile()
         
-        if let avatarURL = ProfileImageService.shared.avatarURL,// 16
-           let url = URL(string: avatarURL) {
-            print("Avatar URL already available: \(avatarURL)")
-            updateAvatarImage(with: url)
+        
+        if let avatarURLString = ProfileImageService.shared.avatarURL,
+           let url = URL(string: avatarURLString) {  // Преобразуем строку в URL
+            print("Avatar URL already available: \(avatarURLString)")
+            presenter.updateAvatarImage(with: url)  // Передаем объект URL, а не строку
         }
     }
     private func setupNotificationObserver() {
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(updateAvatar(_:)),
+            selector: #selector(loadAvatar(_:)),
             name: ProfileImageService.didChangeNotification,
             object: nil
         )
@@ -59,7 +71,7 @@ final class ProfileViewController: UIViewController {
     }
     
     
-    private func addAvatarGradientAnimation() {
+     func startAvatarAnimation() {
         print("avatar gradient animation started")
         // Настройка градиента
         avatarGradientLayer.colors = [
@@ -146,8 +158,8 @@ final class ProfileViewController: UIViewController {
         layer.removeFromSuperlayer()
     }
     
-    private func updateAvatarImage(with url: URL) {
-        print("update Avatar Image called.")
+    func updateAvatarImage(url: URL) {
+        print("updating avatar initiated...")
         DispatchQueue.main.async {
             self.profilePhotoView.kf.setImage(with: url,
                                               options: [
@@ -166,64 +178,13 @@ final class ProfileViewController: UIViewController {
         }
     }
     
-    @objc private func updateAvatar(_ notification: Notification) {
-        print("updateAvatar called.")
-        guard let userInfo = notification.userInfo,
-              let avatarURLString = userInfo["URL"] as? String,
-              let avatarURL = URL(string: avatarURLString) else {
-            print("Failed to retrieve avatar URL from notification.")
-            return
-        }
-        
-        print("Received avatar URL in notification: \(avatarURLString)")
-        
-        DispatchQueue.main.async {
-            self.profilePhotoView.kf.setImage(with: avatarURL,
-                                              options: [
-                                                .transition(.fade(0.2)),
-                                                .cacheOriginalImage
-                                              ],
-                                              completionHandler: { result in
-                switch result {
-                case .success:
-                    print("Avatar image loaded successfully")
-                    
-                case .failure(let error):
-                    print("Failed to load avatar image: \(error.localizedDescription)")
-                }
-            }
-            )
-        }
+    @objc private func  loadAvatar(_ notification: Notification) {
+        presenter.handleAvatarNotification(notification: notification)
+        print("loadAvatar called")
     }
     
     private func loadProfile() {
-        ProfileService.shared.fetchProfile { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let profile):
-                    self?.updateUI(with: profile)
-                case .failure(let error):
-                    self?.showError(error)
-                }
-            }
-        }
-    }
-    
-    private func updateUI(with profile: Profile) {
-        
-        profileNameLabel.text = profile.name
-        profileIDLabel.text = "@\(profile.username)"
-        profileDescriptionLabel.text = profile.bio
-        
-        stopGradientAnimation(for: nameGradientLayer)
-        stopGradientAnimation(for: idGradientLayer)
-        stopGradientAnimation(for: descriptionGradientLayer)
-    }
-    
-    private func showError(_ error: Error) {
-        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
+        presenter.loadProfile()
     }
     
     private func configureLabel(_ label: UILabel, text: String, fontSize: CGFloat, weight: UIFont.Weight, color: Colors) {
@@ -244,6 +205,9 @@ final class ProfileViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
+        profileNameLabel.accessibilityIdentifier = "profileNameLabel"
+        profileIDLabel.accessibilityIdentifier = "profileIDLabel"
+        logoutButton.accessibilityIdentifier = "logoutButton"
         
         configureLabel(profileNameLabel, text:  "User name", fontSize: 23, weight: .bold, color: .nameColor)
         configureLabel(profileIDLabel, text: "User ID", fontSize: 13, weight: .regular, color: .idColor)
@@ -281,8 +245,30 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc func logoutButtonTapped() {
-        ProfileLogoutService.shared.logout()
+        presenter.logout()
     }
 }
 
+extension ProfileViewController {
+    func updateUI(with profile: Profile) {
+        print("Updating UI function initiated")
+       profileNameLabel.text = profile.name
+       profileIDLabel.text = "@\(profile.username)"
+       profileDescriptionLabel.text = profile.bio
+   }
+    
 
+    func showError(_ error: Error) {
+       let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+       alert.addAction(UIAlertAction(title: "OK", style: .default))
+       present(alert, animated: true)
+   }
+
+    func stopLoadingAnimation() {
+        
+        stopGradientAnimation(for: nameGradientLayer)
+        stopGradientAnimation(for: idGradientLayer)
+        stopGradientAnimation(for: descriptionGradientLayer)
+        print("labels animation stopped")
+    }
+}

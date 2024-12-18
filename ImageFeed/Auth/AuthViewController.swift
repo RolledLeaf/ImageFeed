@@ -9,6 +9,7 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
     
     private let loginIcon = UIImageView()
     private let loginButton = UIButton()
+    
     weak var delegate: AuthViewControllerDelegate?
     
     override func viewDidLoad() {
@@ -59,6 +60,7 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
         loginButton.setTitleColor(.backgroundColor1A1B22, for: .normal)
         loginButton.layer.cornerRadius = 16
         loginButton.translatesAutoresizingMaskIntoConstraints = false
+        loginButton.accessibilityIdentifier = "LoginButton"
         view.addSubview(loginButton)
     }
     
@@ -79,9 +81,18 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
     }
     
     @objc private func  loginButtonTapped() {
-        let webViewController = WebViewViewController()
-        webViewController.delegate = self
+        let webViewController = createWebViewModule()
         navigationController?.pushViewController(webViewController, animated: true)
+    }
+    
+    private func createWebViewModule() -> WebViewViewController {
+        let authHelper = AuthHelper()
+        let webViewPresenter = WebViewPresenter(authHelper: authHelper)
+        let webViewController = WebViewViewController()
+        webViewController.webViewPresenter = webViewPresenter
+        webViewPresenter.webView = webViewController
+        webViewController.delegate = self
+        return webViewController
     }
     
     private func handleAuthError(_ error: Error) {
