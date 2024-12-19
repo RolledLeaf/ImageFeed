@@ -1,8 +1,8 @@
 import Foundation
 
-final class ProfileService {
+final class ProfileService: ProfileServiceProtocol {
     static let shared = ProfileService()
-    private init() {}
+     init() {}
     
     private let urlSession: URLSession = .shared
     private var currentProfileTask: URLSessionTask?

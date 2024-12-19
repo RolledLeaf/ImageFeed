@@ -9,8 +9,8 @@ final class OAuth2Service {
     
     func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
         print("Fetching OAuth token...")
-        print("Access Key: \(Constants.accessKey)")
-        print("Secret Key: \(Constants.secretKey)")
+        print("Access Key: \(Constants.accessKey2)")
+        print("Secret Key: \(Constants.secretKey2)")
         print("Redirect URI: \(Constants.redirectURI)")
         print("Authorization Code: \(code)")
         
@@ -21,8 +21,8 @@ final class OAuth2Service {
         }
         
         let parameters: [String: String] = [
-            "client_id": Constants.accessKey,
-            "client_secret": Constants.secretKey,
+            "client_id": Constants.accessKey2,
+            "client_secret": Constants.secretKey2,
             "redirect_uri": Constants.redirectURI,
             "code": code,
             "grant_type": "authorization_code"

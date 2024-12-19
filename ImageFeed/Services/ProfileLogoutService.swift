@@ -27,6 +27,10 @@ final class ProfileLogoutService {
         
         let noAction = UIAlertAction(title: "Нет", style: .cancel, handler: nil)
         
+        // Установка accessibilityIdentifier для кнопок
+        yesAction.accessibilityIdentifier = "LogoutYesButton"
+        noAction.accessibilityIdentifier = "LogoutNoButton"
+        
         alertController.addAction(yesAction)
         alertController.addAction(noAction)
         
