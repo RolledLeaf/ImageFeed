@@ -19,7 +19,7 @@ An image browsing app that uses the Unsplash API as a source of stunning photos.
 - XCTest, XCUITest
 
 ## Screenshots
-<img src="Screenshots/1.png" width="250"> <img src="Screenshots/2.png" width="250"> <img src="Screenshots/3.png" width="250">
+<img src="Screenshots/4.png" width="250"> <img src="Screenshots/5.png" width="250"> <img src="Screenshots/6.png" width="250">
 
 ## Installation
 Open `ImageFeed.xcodeproj` and run the app on iPhone Simulator (iOS 15.6 or later).
