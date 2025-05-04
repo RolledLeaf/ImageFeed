@@ -11,12 +11,12 @@ final class ProfileLogoutService {
     func logout() {
         
         let alertController = UIAlertController(
-            title: "Пока-пока!",
-            message: "Уверены, что хотите выйти?",
+            title: "Bye!",
+            message: "Are you sure you want to log out?",
             preferredStyle: .alert
         )
         
-        let yesAction = UIAlertAction(title: "Да", style: .destructive) { _ in
+        let yesAction = UIAlertAction(title: "Yes", style: .destructive) { _ in
             print("Logging out...")
             self.clearAllCookies{
                 print("Cookies cleared")
@@ -25,7 +25,7 @@ final class ProfileLogoutService {
             self.switchToAuthScreen()
         }
         
-        let noAction = UIAlertAction(title: "Нет", style: .cancel, handler: nil)
+        let noAction = UIAlertAction(title: "No", style: .cancel, handler: nil)
         
         // Установка accessibilityIdentifier для кнопок
         yesAction.accessibilityIdentifier = "LogoutYesButton"

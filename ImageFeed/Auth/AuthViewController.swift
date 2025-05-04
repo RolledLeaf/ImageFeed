@@ -31,7 +31,7 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
     
     func didReceiveAuthorizationCode(_ code: String) {
         guard !code.isEmpty else {
-            showAlert(title: "Ошибка авторизации", message: "Не удалось получить код авторизации. Попробуйте ещё раз.")
+            showAlert(title: "Authorization Error", message: "Unable to get authorization code. Try again.")
             return
         }
         
@@ -39,7 +39,7 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
             DispatchQueue.main.async {
                 switch result {
                 case .success(let token):
-                    print("Получен токен: \(token)")
+                    print("Token received: \(token)")
                 case .failure(let error):
                     self?.handleAuthError(error)
                 }
@@ -54,7 +54,7 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
         loginIcon.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(loginIcon)
         
-        loginButton.setTitle("Войти", for: .normal)
+        loginButton.setTitle("Log in", for: .normal)
         loginButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
         loginButton.backgroundColor = .nameColorFFFFFFF
         loginButton.setTitleColor(.backgroundColor1A1B22, for: .normal)
@@ -98,15 +98,15 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
     private func handleAuthError(_ error: Error) {
         switch error {
         case AuthError.invalidResponse:
-            showAlert(title: "Ошибка сервера", message: "Сервер вернул некорректный ответ. Попробуйте позже.")
+            showAlert(title: "Server error", message: "Invalid server response. Try again later.")
         case AuthError.serverError(let code):
-            showAlert(title: "Ошибка сервера", message: "Ошибка на сервере (код: \(code)).")
+            showAlert(title: "Server error", message: "Server error (code: \(code)).")
         case AuthError.invalidData:
-            showAlert(title: "Ошибка данных", message: "Данные авторизации некорректны. Попробуйте ещё раз.")
+            showAlert(title: "Data error", message: "Invalid authorization data. Try again.")
         case AuthError.networkError:
-            showAlert(title: "Сетевая ошибка", message: "Проверьте подключение к интернету.")
+            showAlert(title: "Network error", message: "Check your internet connection.")
         case AuthError.unknown:
-            showAlert(title: "Неизвестная ошибка", message: "Что-то пошло не так. Попробуйте ещё раз.")
+            showAlert(title: "Unknown error", message: "Something went wrong. Try again")
         default :
             return
         }
@@ -117,7 +117,7 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
         let okAction = UIAlertAction(title: "Ок", style: .default)
         alertController.addAction(okAction)
         present(alertController, animated: true)
-        let retryAction = UIAlertAction(title: "Повторить", style: .default) { _ in
+        let retryAction = UIAlertAction(title: "Repeat", style: .default) { _ in
         }
         alertController.addAction(retryAction)
     }
