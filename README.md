@@ -13,6 +13,7 @@ An image browsing app that uses the Unsplash API as a source of stunning photos.
 ## Technologies
 - Swift & UIKit
 - Storyboard + programmatic UI
+- UITableView
 - URLSession & REST API
 - OAuth 2.0
 - MVP architecture
